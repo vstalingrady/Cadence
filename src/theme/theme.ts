@@ -1,11 +1,13 @@
 const theme = {
   colors: {
-    primary: '#3B82F6', // Blue-500
-    accent: '#8B5CF6', // Violet-500
-    background: '#111827', // Gray-900
-    foreground: '#F9FAFB', // Gray-50
-    muted: '#4B5563', // Gray-600
-    mutedForeground: '#9CA3AF', // Gray-400
+    primary: '#ff8800',
+    accent: '#ffbf00',
+    background: '#100b09',
+    foreground: '#fbfaf9',
+    muted: '#281e1b',
+    mutedForeground: '#a8a6a3',
+    card: '#2d1c10',
+    border: '#281e1b',
   },
   fonts: {
     sans: 'PlusJakartaSans-Regular',
