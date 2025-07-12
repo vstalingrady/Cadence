@@ -78,6 +78,7 @@ const WelcomeScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Glow />
       <Animated.View style={[{ transform: [{ translateY: headerTranslateY }], opacity: headerOpacity }, styles.header]}>
         <WelcomeHeader onLoginPress={() => {}} onSignUpPress={() => {}} />
       </Animated.View>
@@ -94,18 +95,17 @@ const WelcomeScreen = () => {
             <View style={styles.textContainer}>
               {index === 0 ? (
                 <View style={styles.titleContainer}>
-                  <Glow />
                   <Text style={styles.title}>{slide.title}</Text>
                   <MaskedView
                     style={styles.maskedView}
-                    maskElement={<Text style={[styles.title, { backgroundColor: 'transparent' }]}>{slide.gradientTitle}</Text>}
+                    maskElement={<Text style={[styles.title, styles.gradientText, { backgroundColor: 'transparent' }]}>{slide.gradientTitle}</Text>}
                   >
                     <LinearGradient
                       colors={[theme.colors.primary, theme.colors.accent]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                     >
-                      <Text style={[styles.title, { opacity: 0 }]}>{slide.gradientTitle}</Text>
+                      <Text style={[styles.title, styles.gradientText, { opacity: 0 }]}>{slide.gradientTitle}</Text>
                     </LinearGradient>
                   </MaskedView>
                 </View>
@@ -163,6 +163,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: theme.spacing.medium,
     lineHeight: theme.lineHeights.loose,
+  },
+  gradientText: {
+    textShadowColor: `${theme.colors.primary}90`,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 10,
   },
   description: {
     fontFamily: theme.fonts.sans,

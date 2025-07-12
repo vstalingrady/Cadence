@@ -4,48 +4,33 @@ import LinearGradient from 'react-native-linear-gradient';
 import theme from '~/theme/theme';
 
 const Glow = () => {
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-  const opacityAnim = useRef(new Animated.Value(0.7)).current;
+  const opacityAnim = useRef(new Animated.Value(0.15)).current;
 
   useEffect(() => {
     const pulseAnimation = () => {
       Animated.loop(
         Animated.sequence([
-          Animated.parallel([
-            Animated.timing(scaleAnim, {
-              toValue: 1.1,
-              duration: 3000,
-              useNativeDriver: true,
-            }),
-            Animated.timing(opacityAnim, {
-              toValue: 1,
-              duration: 3000,
-              useNativeDriver: true,
-            }),
-          ]),
-          Animated.parallel([
-            Animated.timing(scaleAnim, {
-              toValue: 1,
-              duration: 3000,
-              useNativeDriver: true,
-            }),
-            Animated.timing(opacityAnim, {
-              toValue: 0.7,
-              duration: 3000,
-              useNativeDriver: true,
-            }),
-          ]),
+          Animated.timing(opacityAnim, {
+            toValue: 0.3,
+            duration: 4000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(opacityAnim, {
+            toValue: 0.15,
+            duration: 4000,
+            useNativeDriver: true,
+          }),
         ])
       ).start();
     };
 
     pulseAnimation();
-  }, [scaleAnim, opacityAnim]);
+  }, [opacityAnim]);
 
   return (
-    <Animated.View style={[styles.glowContainer, { transform: [{ scale: scaleAnim }], opacity: opacityAnim }]}>
+    <Animated.View style={[styles.glowContainer, { opacity: opacityAnim }]}>
       <LinearGradient
-        colors={[`${theme.colors.primary}50`, 'transparent']}
+        colors={[`${theme.colors.primary}90`, 'transparent']}
         style={styles.gradient}
       />
     </Animated.View>
@@ -55,14 +40,15 @@ const Glow = () => {
 const styles = StyleSheet.create({
   glowContainer: {
     position: 'absolute',
-    width: 300,
-    height: 200,
+    top: -100,
+    left: 0,
+    right: 0,
+    height: 300,
     zIndex: -1,
   },
   gradient: {
     width: '100%',
     height: '100%',
-    borderRadius: 150,
   },
 });
 
