@@ -4,6 +4,8 @@ import theme from '~/theme/theme';
 import WelcomeHeader from '~/components/WelcomeHeader';
 import MaskedView from '@react-native-masked-view/masked-view';
 import LinearGradient from 'react-native-linear-gradient';
+import { BarChart2 } from 'lucide-react-native';
+import WelcomeDashboardMockup from '~/components/WelcomeDashboardMockup';
 
 const WelcomeScreen = () => {
   const { width } = useWindowDimensions();
@@ -15,41 +17,49 @@ const WelcomeScreen = () => {
       title: 'All Your Money,',
       gradientTitle: 'One Single App.',
       description: 'Semua securely connects to all your accounts, giving you a complete financial overview and AI-powered insights to grow your wealth.',
+      icon: null,
       mockup: null,
     },
     {
       title: 'Unified Dashboard',
       description: 'See your complete financial picture in one glance. Track balances across all your linked accounts in real-time.',
-      mockup: 'Dashboard',
+      icon: BarChart2,
+      mockup: WelcomeDashboardMockup,
     },
     {
       title: 'Effortless Payments',
       description: 'Pay bills, transfer funds, and top-up e-wallets seamlessly from any of your accounts, all from one central hub.',
+      icon: null,
       mockup: 'Payments',
     },
     {
       title: 'Smart Budgeting',
       description: 'Set custom budgets, track your spending against them in real-time, and get coached by our AI to stay on track.',
+      icon: null,
       mockup: 'Budgets',
     },
     {
       title: 'AI-Powered Insights',
       description: 'Let our AI analyze your spending to find personalized saving opportunities and create actionable financial plans.',
+      icon: null,
       mockup: 'Insights',
     },
     {
       title: 'Automated Savings',
       description: 'Create savings vaults for your goals. Automate contributions with round-ups and scheduled transfers.',
+      icon: null,
       mockup: 'Vaults',
     },
     {
       title: 'Bank-Grade Security',
       description: 'Your data is protected with the highest bank-grade security standards, including 256-bit AES encryption. Your privacy is our priority.',
+      icon: null,
       mockup: 'Security',
     },
     {
       title: 'Sign Up',
       description: '',
+      icon: null,
       mockup: 'Signup',
     },
   ];
@@ -91,6 +101,7 @@ const WelcomeScreen = () => {
         {slides.map((slide, index) => (
           <View key={index} style={[styles.slide, { width }]}>
             <View style={styles.textContainer}>
+              {slide.icon && <slide.icon size={32} color={theme.colors.primary} style={styles.icon} />}
               {index === 0 ? (
                 <View style={styles.titleContainer}>
                   <Text style={styles.title}>{slide.title}</Text>
@@ -112,9 +123,13 @@ const WelcomeScreen = () => {
               )}
               {slide.description ? <Text style={styles.description}>{slide.description}</Text> : null}
             </View>
-            {slide.mockup ? (
+            {slide.mockup && typeof slide.mockup === 'string' ? (
               <View style={styles.mockupContainer}>
                 <Text style={styles.mockupText}>{slide.mockup} Mockup</Text>
+              </View>
+            ) : slide.mockup ? (
+              <View style={styles.mockupContainer}>
+                <slide.mockup />
               </View>
             ) : null}
           </View>
@@ -188,7 +203,10 @@ const styles = StyleSheet.create({
   },
   maskedView: {
     height: theme.fontSizes.xxl + theme.lineHeights.loose / 2,
-  }
+  },
+  icon: {
+    marginBottom: theme.spacing.medium,
+  },
 });
 
 export default WelcomeScreen;
