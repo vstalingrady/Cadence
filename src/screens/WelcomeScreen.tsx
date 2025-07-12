@@ -61,11 +61,28 @@ const WelcomeScreen = () => {
     },
   });
 
+  const headerAnimatedStyle = useAnimatedStyle(() => {
+    const translateY = interpolate(
+      scrollX.value,
+      [(slides.length - 2) * width, (slides.length - 1) * width],
+      [0, -100]
+    );
+    const opacity = interpolate(
+      scrollX.value,
+      [(slides.length - 2) * width, (slides.length - 1) * width],
+      [1, 0]
+    );
+    return {
+      transform: [{ translateY }],
+      opacity,
+    };
+  });
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      <Animated.View style={[headerAnimatedStyle, styles.header]}>
         <WelcomeHeader onLoginPress={() => {}} onSignUpPress={() => {}} />
-      </View>
+      </Animated.View>
       <Animated.ScrollView
         horizontal
         pagingEnabled
