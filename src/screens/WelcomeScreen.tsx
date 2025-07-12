@@ -4,7 +4,6 @@ import theme from '~/theme/theme';
 import WelcomeHeader from '~/components/WelcomeHeader';
 import MaskedView from '@react-native-masked-view/masked-view';
 import LinearGradient from 'react-native-linear-gradient';
-import Glow from '~/components/Glow';
 
 const WelcomeScreen = () => {
   const { width } = useWindowDimensions();
@@ -78,7 +77,6 @@ const WelcomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Glow />
       <Animated.View style={[{ transform: [{ translateY: headerTranslateY }], opacity: headerOpacity }, styles.header]}>
         <WelcomeHeader onLoginPress={() => {}} onSignUpPress={() => {}} />
       </Animated.View>
