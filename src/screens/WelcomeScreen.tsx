@@ -4,6 +4,7 @@ import theme from '~/theme/theme';
 import WelcomeHeader from '~/components/WelcomeHeader';
 import MaskedView from '@react-native-masked-view/masked-view';
 import LinearGradient from 'react-native-linear-gradient';
+import Animated, { useSharedValue, useAnimatedScrollHandler, useAnimatedStyle, interpolate } from 'react-native-reanimated';
 import WelcomeDashboardMockup from '~/components/WelcomeDashboardMockup';
 
 const WelcomeScreen = () => {
