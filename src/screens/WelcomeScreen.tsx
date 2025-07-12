@@ -19,8 +19,6 @@ const WelcomeScreen = () => {
       icon: null,
     },
     {
-      title: 'Unified Dashboard',
-      description: 'See your complete financial picture in one glance. Track balances across all your linked accounts in real-time.',
       icon: WelcomeDashboardMockup,
     },
     {
