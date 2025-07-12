@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, useWindowDimensions, NativeSyntheticEvent, NativeScrollEvent, Animated, Platform, StatusBar } from 'react-native';
 import theme from '~/theme/theme';
 import WelcomeHeader from '~/components/WelcomeHeader';
+import MaskedView from '@react-native-masked-view/masked-view';
+import LinearGradient from 'react-native-linear-gradient';
 
 const WelcomeScreen = () => {
   const { width } = useWindowDimensions();
@@ -10,7 +12,8 @@ const WelcomeScreen = () => {
 
   const slides = [
     {
-      title: 'All Your Money,\nOne Single App.',
+      title: 'All Your Money,',
+      gradientTitle: 'One Single App.',
       description: 'Semua securely connects to all your accounts, giving you a complete financial overview and AI-powered insights to grow your wealth.',
       mockup: null,
     },
@@ -88,7 +91,25 @@ const WelcomeScreen = () => {
         {slides.map((slide, index) => (
           <View key={index} style={[styles.slide, { width }]}>
             <View style={styles.textContainer}>
-              <Text style={styles.title}>{slide.title}</Text>
+              {index === 0 ? (
+                <View>
+                  <Text style={styles.title}>{slide.title}</Text>
+                  <MaskedView
+                    style={styles.maskedView}
+                    maskElement={<Text style={[styles.title, { backgroundColor: 'transparent' }]}>{slide.gradientTitle}</Text>}
+                  >
+                    <LinearGradient
+                      colors={[theme.colors.primary, theme.colors.accent]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                    >
+                      <Text style={[styles.title, { opacity: 0 }]}>{slide.gradientTitle}</Text>
+                    </LinearGradient>
+                  </MaskedView>
+                </View>
+              ) : (
+                <Text style={styles.title}>{slide.title}</Text>
+              )}
               {slide.description ? <Text style={styles.description}>{slide.description}</Text> : null}
             </View>
             {slide.mockup ? (
@@ -155,6 +176,9 @@ const styles = StyleSheet.create({
     color: theme.colors.foreground,
     fontSize: theme.fontSizes.large,
   },
+  maskedView: {
+    height: theme.fontSizes.xxl + theme.lineHeights.loose / 2,
+  }
 });
 
 export default WelcomeScreen;
