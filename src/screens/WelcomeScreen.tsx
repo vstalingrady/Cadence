@@ -4,8 +4,7 @@ import theme from '~/theme/theme';
 import WelcomeHeader from '~/components/WelcomeHeader';
 import MaskedView from '@react-native-masked-view/masked-view';
 import LinearGradient from 'react-native-linear-gradient';
-import { BarChart2 } from 'lucide-react-native';
-import Animated, { useSharedValue, useAnimatedScrollHandler, useAnimatedStyle, interpolate } from 'react-native-reanimated';
+import WelcomeDashboardMockup from '~/components/WelcomeDashboardMockup';
 
 const WelcomeScreen = () => {
   const { width } = useWindowDimensions();
@@ -21,7 +20,7 @@ const WelcomeScreen = () => {
     {
       title: 'Unified Dashboard',
       description: 'See your complete financial picture in one glance. Track balances across all your linked accounts in real-time.',
-      icon: BarChart2,
+      icon: WelcomeDashboardMockup,
     },
     {
       title: 'Effortless Payments',
