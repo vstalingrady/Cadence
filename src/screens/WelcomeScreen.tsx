@@ -1,15 +1,15 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, useWindowDimensions, NativeSyntheticEvent, NativeScrollEvent, Animated, Platform, StatusBar } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, useWindowDimensions, Platform, StatusBar } from 'react-native';
 import theme from '~/theme/theme';
 import WelcomeHeader from '~/components/WelcomeHeader';
 import MaskedView from '@react-native-masked-view/masked-view';
 import LinearGradient from 'react-native-linear-gradient';
 import { BarChart2 } from 'lucide-react-native';
+import Animated, { useSharedValue, useAnimatedScrollHandler, useAnimatedStyle, interpolate } from 'react-native-reanimated';
 
 const WelcomeScreen = () => {
   const { width } = useWindowDimensions();
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const scrollX = useRef(new Animated.Value(0)).current;
+  const scrollX = useSharedValue(0);
 
   const slides = [
     {
@@ -55,37 +55,39 @@ const WelcomeScreen = () => {
     },
   ];
 
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const newIndex = Math.round(event.nativeEvent.contentOffset.x / width);
-    setSelectedIndex(newIndex);
-    Animated.event(
-      [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-      { useNativeDriver: false }
-    )(event);
-  };
-
-  const headerTranslateY = scrollX.interpolate({
-    inputRange: [(slides.length - 2) * width, (slides.length - 1) * width],
-    outputRange: [0, -100],
-    extrapolate: 'clamp',
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollX.value = event.contentOffset.x;
+    },
   });
 
-  const headerOpacity = scrollX.interpolate({
-    inputRange: [(slides.length - 2) * width, (slides.length - 1) * width],
-    outputRange: [1, 0],
-    extrapolate: 'clamp',
+  const headerAnimatedStyle = useAnimatedStyle(() => {
+    const translateY = interpolate(
+      scrollX.value,
+      [(slides.length - 2) * width, (slides.length - 1) * width],
+      [0, -100]
+    );
+    const opacity = interpolate(
+      scrollX.value,
+      [(slides.length - 2) * width, (slides.length - 1) * width],
+      [1, 0]
+    );
+    return {
+      transform: [{ translateY }],
+      opacity,
+    };
   });
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[{ transform: [{ translateY: headerTranslateY }], opacity: headerOpacity }, styles.header]}>
+      <Animated.View style={[headerAnimatedStyle, styles.header]}>
         <WelcomeHeader onLoginPress={() => {}} onSignUpPress={() => {}} />
       </Animated.View>
-      <ScrollView
+      <Animated.ScrollView
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        onScroll={handleScroll}
+        onScroll={scrollHandler}
         scrollEventThrottle={16}
         style={styles.scrollView}
       >
@@ -116,14 +118,27 @@ const WelcomeScreen = () => {
             </View>
           </View>
         ))}
-      </ScrollView>
+      </Animated.ScrollView>
       <View style={styles.dotContainer}>
-        {slides.map((_, i) => (
-          <View
-            key={i}
-            style={[styles.dot, { opacity: selectedIndex === i ? 1 : 0.3, width: selectedIndex === i ? 16 : 8 }]}
-          />
-        ))}
+        {slides.map((_, i) => {
+          const dotStyle = useAnimatedStyle(() => {
+            const opacity = interpolate(
+              scrollX.value,
+              [(i - 1) * width, i * width, (i + 1) * width],
+              [0.3, 1, 0.3]
+            );
+            const dotWidth = interpolate(
+              scrollX.value,
+              [(i - 1) * width, i * width, (i + 1) * width],
+              [8, 16, 8]
+            );
+            return {
+              opacity,
+              width: dotWidth,
+            };
+          });
+          return <Animated.View key={i} style={[styles.dot, dotStyle]} />;
+        })}
       </View>
     </View>
   );

@@ -10,7 +10,7 @@ interface WelcomeHeaderProps {
 const WelcomeHeader: React.FC<WelcomeHeaderProps> = ({ onLoginPress, onSignUpPress }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.logo}>Semua</Text>
+      <Text style={styles.logo}>Cadence</Text>
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={onLoginPress}>
           <Text style={styles.loginText}>Log In</Text>
