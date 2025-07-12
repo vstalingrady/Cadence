@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, useWindowDimensions, NativeSyntheticEvent, NativeScrollEvent, Animated, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, useWindowDimensions, NativeSyntheticEvent, NativeScrollEvent, Animated, Platform, StatusBar } from 'react-native';
 import theme from '~/theme/theme';
 import WelcomeHeader from '~/components/WelcomeHeader';
 
@@ -73,8 +73,8 @@ const WelcomeScreen = () => {
   });
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Animated.View style={{ transform: [{ translateY: headerTranslateY }], opacity: headerOpacity }}>
+    <View style={styles.container}>
+      <Animated.View style={[{ transform: [{ translateY: headerTranslateY }], opacity: headerOpacity }, styles.header]}>
         <WelcomeHeader onLoginPress={() => {}} onSignUpPress={() => {}} />
       </Animated.View>
       <ScrollView
@@ -99,7 +99,7 @@ const WelcomeScreen = () => {
           </View>
         ))}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -107,6 +107,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
+  header: {
+    position: 'absolute',
+    top: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
   },
   scrollView: {
     flex: 1,
