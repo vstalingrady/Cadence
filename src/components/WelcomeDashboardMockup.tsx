@@ -135,14 +135,7 @@ const formatDisplayNumber = (acc: Account): string => {
 // -------------------
 // Institution logo map
 // -------------------
-const institutionLogos: { [slug: string]: any } = {
-  bca: require('./assets/logos/bca.png'),
-  gopay: require('./assets/logos/gopay.png'),
-  mandiri: require('./assets/logos/mandiri.png'),
-  bibit: require('./assets/logos/bibit.png'),
-  pintu: require('./assets/logos/pintu.png'),
-  kredivo: require('./assets/logos/kredivo.png'),
-};
+
 
 // -------------------
 // Re-usable card
@@ -256,12 +249,7 @@ export default function WelcomeDashboardMockup({
             {pinnedAccounts.map(acc => (
               <MockAccountCard
                 key={acc.id}
-                icon={
-                  <Image
-                    source={institutionLogos[acc.institutionSlug]}
-                    style={styles.logo}
-                  />
-                }
+                icon={<Wallet size={28} color="#64748b" />}
                 name={acc.name}
                 displayNumber={formatDisplayNumber(acc)}
                 balance={formatCurrency(acc.balance)}
@@ -277,12 +265,7 @@ export default function WelcomeDashboardMockup({
             {accountGroups.bank.map(acc => (
               <MockAccountCard
                 key={acc.id}
-                icon={
-                  <Image
-                    source={institutionLogos[acc.institutionSlug]}
-                    style={styles.logo}
-                  />
-                }
+                icon={<Wallet size={28} color="#64748b" />}
                 name={acc.name}
                 displayNumber={formatDisplayNumber(acc)}
                 balance={formatCurrency(acc.balance)}
@@ -297,12 +280,7 @@ export default function WelcomeDashboardMockup({
             {accountGroups.ewallet.map(acc => (
               <MockAccountCard
                 key={acc.id}
-                icon={
-                  <Image
-                    source={institutionLogos[acc.institutionSlug]}
-                    style={styles.logo}
-                  />
-                }
+                icon={<Wallet size={28} color="#64748b" />}
                 name={acc.name}
                 displayNumber={formatDisplayNumber(acc)}
                 balance={formatCurrency(acc.balance)}
@@ -317,12 +295,7 @@ export default function WelcomeDashboardMockup({
             {accountGroups.investment.map(acc => (
               <MockAccountCard
                 key={acc.id}
-                icon={
-                  <Image
-                    source={institutionLogos[acc.institutionSlug]}
-                    style={styles.logo}
-                  />
-                }
+                icon={<Wallet size={28} color="#64748b" />}
                 name={acc.name}
                 displayNumber={formatDisplayNumber(acc)}
                 balance={formatCurrency(acc.balance)}
@@ -337,12 +310,7 @@ export default function WelcomeDashboardMockup({
             {accountGroups.loan.map(acc => (
               <MockAccountCard
                 key={acc.id}
-                icon={
-                  <Image
-                    source={institutionLogos[acc.institutionSlug]}
-                    style={styles.logo}
-                  />
-                }
+                icon={<Wallet size={28} color="#64748b" />}
                 name={acc.name}
                 displayNumber={formatDisplayNumber(acc)}
                 balance={formatCurrency(acc.balance)}
