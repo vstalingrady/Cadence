@@ -4,6 +4,7 @@ import theme from '~/theme/theme';
 import WelcomeHeader from '~/components/WelcomeHeader';
 import MaskedView from '@react-native-masked-view/masked-view';
 import LinearGradient from 'react-native-linear-gradient';
+import Glow from '~/components/Glow';
 
 const WelcomeScreen = () => {
   const { width } = useWindowDimensions();
@@ -92,7 +93,8 @@ const WelcomeScreen = () => {
           <View key={index} style={[styles.slide, { width }]}>
             <View style={styles.textContainer}>
               {index === 0 ? (
-                <View>
+                <View style={styles.titleContainer}>
+                  <Glow />
                   <Text style={styles.title}>{slide.title}</Text>
                   <MaskedView
                     style={styles.maskedView}
@@ -150,6 +152,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: theme.spacing.large,
   },
+  titleContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   title: {
     fontFamily: theme.fonts.serif,
     fontSize: theme.fontSizes.xxl,
@@ -163,6 +169,7 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSizes.medium,
     color: theme.colors.mutedForeground,
     textAlign: 'center',
+    marginTop: theme.spacing.medium,
   },
   mockupContainer: {
     width: '80%',
