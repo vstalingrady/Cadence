@@ -10,7 +10,7 @@ interface WelcomeHeaderProps {
 const WelcomeHeader: React.FC<WelcomeHeaderProps> = ({ onLoginPress, onSignUpPress }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.logo}>Cadence</Text>
+      <Text style={styles.logo}>Semua</Text>
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={onLoginPress}>
           <Text style={styles.loginText}>Log In</Text>
@@ -30,11 +30,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: theme.spacing.large,
     paddingVertical: theme.spacing.medium,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
   },
   logo: {
     fontFamily: theme.fonts.serif,
