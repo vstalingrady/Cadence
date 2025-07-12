@@ -1,9 +1,12 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, useWindowDimensions } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, ScrollView, useWindowDimensions, NativeSyntheticEvent, NativeScrollEvent, Animated } from 'react-native';
 import theme from '~/theme/theme';
+import WelcomeHeader from '~/components/WelcomeHeader';
 
 const WelcomeScreen = () => {
   const { width } = useWindowDimensions();
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const scrollX = useRef(new Animated.Value(0)).current;
 
   const slides = [
     {
@@ -48,12 +51,38 @@ const WelcomeScreen = () => {
     },
   ];
 
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const newIndex = Math.round(event.nativeEvent.contentOffset.x / width);
+    setSelectedIndex(newIndex);
+    Animated.event(
+      [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+      { useNativeDriver: false }
+    )(event);
+  };
+
+  const headerTranslateY = scrollX.interpolate({
+    inputRange: [(slides.length - 2) * width, (slides.length - 1) * width],
+    outputRange: [0, -100],
+    extrapolate: 'clamp',
+  });
+
+  const headerOpacity = scrollX.interpolate({
+    inputRange: [(slides.length - 2) * width, (slides.length - 1) * width],
+    outputRange: [1, 0],
+    extrapolate: 'clamp',
+  });
+
   return (
     <View style={styles.container}>
+      <Animated.View style={{ transform: [{ translateY: headerTranslateY }], opacity: headerOpacity }}>
+        <WelcomeHeader onLoginPress={() => {}} onSignUpPress={() => {}} />
+      </Animated.View>
       <ScrollView
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         style={styles.scrollView}
       >
         {slides.map((slide, index) => (
