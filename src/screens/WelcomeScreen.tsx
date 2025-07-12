@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, useWindowDimensions, Platform, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, useWindowDimensions, Platform, StatusBar, SafeAreaView } from 'react-native';
 import theme from '~/theme/theme';
 import WelcomeHeader from '~/components/WelcomeHeader';
 import MaskedView from '@react-native-masked-view/masked-view';
@@ -79,7 +79,7 @@ const WelcomeScreen = () => {
   });
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Animated.View style={[headerAnimatedStyle, styles.header]}>
         <WelcomeHeader onLoginPress={() => {}} onSignUpPress={() => {}} />
       </Animated.View>
@@ -140,7 +140,7 @@ const WelcomeScreen = () => {
           return <Animated.View key={i} style={[styles.dot, dotStyle]} />;
         })}
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -148,7 +148,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
     position: 'absolute',
