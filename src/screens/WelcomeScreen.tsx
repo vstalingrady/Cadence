@@ -90,6 +90,7 @@ const WelcomeScreen = () => {
         onScroll={scrollHandler}
         scrollEventThrottle={16}
         style={styles.scrollView}
+        contentContainerStyle={{ paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }}
       >
         {slides.map((slide, index) => (
           <View key={index} style={[styles.slide, { width }]}>
