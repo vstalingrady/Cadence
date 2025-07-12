@@ -1,158 +1,450 @@
+// WelcomeDashboardMockup.tsx
+import React, { useEffect, useMemo, useRef } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  Dimensions,
+} from 'react-native';
+import { Pin, Landmark, Briefcase, Wallet, Coins } from 'lucide-react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  withTiming,
+  runOnJS,
+  scrollTo,
+} from 'react-native-reanimated';
 
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import theme from '~/theme/theme';
-import TotalBalance from './TotalBalance';
-import MockAccountCard from './MockAccountCard';
-import { Wallet, Pin } from 'lucide-react-native';
-import { LineChart } from 'react-native-chart-kit';
-
-const screenWidth = Dimensions.get('window').width;
-
-const WelcomeDashboardMockup = () => {
-  const data = {
-    labels: ["2", "8", "14", "20", "26", "1"],
-    datasets: [
-      {
-        data: [252, 273, 293, 314, 334, 318],
-        color: (opacity = 1) => `rgba(255, 165, 0, ${opacity})`, // Orange color
-        strokeWidth: 2 // optional
-      }
-    ]
-  };
-
-  const chartConfig = {
-    backgroundGradientFrom: theme.colors.card,
-    backgroundGradientTo: theme.colors.card,
-    decimalPlaces: 0, // optional, defaults to 2dp
-    color: (opacity = 1) => `rgba(255, 165, 0, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(150, 150, 150, ${opacity})`,
-    style: {
-      borderRadius: 16
-    },
-    propsForDots: {
-      r: "6",
-      strokeWidth: "2",
-      stroke: theme.colors.primary
-    }
-  };
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.cardContent}>
-        <TotalBalance title="TOTAL NET WORTH" amount={318768501} />
-        <LineChart
-          data={data}
-          width={screenWidth - theme.spacing.large * 2 - theme.spacing.medium * 2} // Adjust for container padding
-          height={150}
-          chartConfig={chartConfig}
-          bezier
-          style={{
-            marginVertical: theme.spacing.large,
-            borderRadius: 16
-          }}
-        />
-        <View style={styles.timeRangeContainer}>
-          <TouchableOpacity style={styles.timeRangeButton}><Text style={styles.timeRangeText}>7D</Text></TouchableOpacity>
-          <TouchableOpacity style={[styles.timeRangeButton, styles.activeTimeRange]}><Text style={[styles.timeRangeText, styles.activeTimeRangeText]}>30D</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.timeRangeButton}><Text style={styles.timeRangeText}>1Y</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.timeRangeButton}><Text style={styles.timeRangeText}>ALL</Text></TouchableOpacity>
-        </View>
-        <View style={styles.pinnedContainer}>
-          <View style={styles.pinnedHeader}>
-            <Pin size={16} color={theme.colors.mutedForeground} />
-            <Text style={styles.pinnedTitle}>Pinned</Text>
-          </View>
-          <MockAccountCard 
-            icon={<Wallet size={24} color={theme.colors.primary} />} 
-            name="BCA Tahapan Gold" 
-            displayNumber="**** 1234" 
-            balance="Rp 150.000.000"
-          />
-        </View>
-      </View>
-      <View style={styles.bottomTextContainer}>
-        <Text style={styles.bottomTitle}>Unified Dashboard</Text>
-        <Text style={styles.bottomDescription}>See your complete financial picture in one glance. Track balances across all your linked accounts in real-time.</Text>
-      </View>
-    </View>
-  );
+// -------------------
+// Types (same shape as your web types)
+// -------------------
+type Holdings = {
+  id: string;
+  name: string;
+  symbol: string;
+  amount: number;
+  value: number;
+  logoUrl: string;
+};
+type Account = {
+  id: string;
+  name: string;
+  institutionSlug: string;
+  type: 'bank' | 'e-wallet' | 'investment' | 'loan';
+  balance: number;
+  accountNumber?: string;
+  isPinned?: boolean;
+  holdings?: Holdings[];
+};
+type Transaction = {
+  id: string;
+  accountId: string;
+  amount: number;
+  date: string;
+  description: string;
+  category: string;
 };
 
+// -------------------
+// Mock Data (identical to web)
+// -------------------
+const mockAccounts: Account[] = [
+  {
+    id: 'bca-tahapan-gold',
+    name: 'BCA Tahapan Gold',
+    institutionSlug: 'bca',
+    type: 'bank',
+    balance: 150000000,
+    accountNumber: '1234567890',
+    isPinned: true,
+  },
+  {
+    id: 'gopay-main',
+    name: 'GoPay Main',
+    institutionSlug: 'gopay',
+    type: 'e-wallet',
+    balance: 250000,
+    accountNumber: '08123456789',
+    isPinned: true,
+  },
+  {
+    id: 'mandiri-tabungan',
+    name: 'Mandiri Tabungan',
+    institutionSlug: 'mandiri',
+    type: 'bank',
+    balance: 75000000,
+    accountNumber: '0987654321',
+  },
+  {
+    id: 'bibit-reksadana',
+    name: 'Bibit Reksadana',
+    institutionSlug: 'bibit',
+    type: 'investment',
+    balance: 50000000,
+    holdings: [
+      { id: 'h1', name: 'ABC Equity Fund', symbol: 'ABC', amount: 100, value: 25000000, logoUrl: '' },
+      { id: 'h2', name: 'XYZ Bond Fund', symbol: 'XYZ', amount: 50, value: 25000000, logoUrl: '' },
+    ],
+  },
+  {
+    id: 'pintu-crypto',
+    name: 'Pintu Crypto',
+    institutionSlug: 'pintu',
+    type: 'investment',
+    balance: 10000000,
+    holdings: [
+      { id: 'h3', name: 'Bitcoin', symbol: 'BTC', amount: 0.5, value: 5000000, logoUrl: '' },
+      { id: 'h4', name: 'Ethereum', symbol: 'ETH', amount: 2, value: 5000000, logoUrl: '' },
+    ],
+  },
+  {
+    id: 'kredivo-loan',
+    name: 'Kredivo Loan',
+    institutionSlug: 'kredivo',
+    type: 'loan',
+    balance: 5000000,
+    accountNumber: 'KLN12345',
+  },
+];
+const mockTransactions: Transaction[] = []; // You can populate this if needed
+
+// -------------------
+// Helper: currency
+// -------------------
+export const formatCurrency = (amount: number) =>
+  new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+  }).format(amount);
+
+// -------------------
+// Helper: mask account number
+// -------------------
+const formatDisplayNumber = (acc: Account): string => {
+  if (acc.type === 'investment') return '';
+  if (acc.type === 'loan') return 'Outstanding debt';
+  const n = acc.accountNumber ?? '';
+  return n.length > 4
+    ? `${n.slice(0, 2)}********${n.slice(-2)}`
+    : `...${n}`;
+};
+
+// -------------------
+// Institution logo map
+// -------------------
+const institutionLogos: { [slug: string]: any } = {
+  bca: require('./assets/logos/bca.png'),
+  gopay: require('./assets/logos/gopay.png'),
+  mandiri: require('./assets/logos/mandiri.png'),
+  bibit: require('./assets/logos/bibit.png'),
+  pintu: require('./assets/logos/pintu.png'),
+  kredivo: require('./assets/logos/kredivo.png'),
+};
+
+// -------------------
+// Re-usable card
+// -------------------
+const MockAccountCard = ({
+  icon,
+  name,
+  displayNumber,
+  balance,
+  isLoan = false,
+}: {
+  icon: React.ReactNode;
+  name: string;
+  displayNumber: string;
+  balance: string;
+  isLoan?: boolean;
+}) => (
+  <View style={styles.card}>
+    <View style={styles.cardInner}>
+      <View style={styles.iconWrapper}>{icon}</View>
+      <View style={styles.textWrapper}>
+        <Text style={styles.cardTitle} numberOfLines={1}>
+          {name}
+        </Text>
+        {!!displayNumber && (
+          <Text style={styles.cardSubtitle} numberOfLines={1}>
+            {displayNumber}
+          </Text>
+        )}
+      </View>
+    </View>
+    <Text style={[styles.balance, isLoan && styles.negative]}>{balance}</Text>
+  </View>
+);
+
+// -------------------
+// Main component
+// -------------------
+export default function WelcomeDashboardMockup({
+  isActive = false,
+}: {
+  isActive?: boolean;
+}) {
+  const scrollRef = useRef<Animated.ScrollView>(null);
+  const scrollY = useSharedValue(0);
+
+  // Memoised calculations
+  const { totalAssets, totalLiabilities, netWorth, pinnedAccounts, accountGroups } =
+    useMemo(() => {
+      const assets = mockAccounts
+        .filter(a => a.type !== 'loan')
+        .reduce((s, a) => s + a.balance, 0);
+      const liabilities = mockAccounts
+        .filter(a => a.type === 'loan')
+        .reduce((s, a) => s + a.balance, 0);
+      return {
+        totalAssets: assets,
+        totalLiabilities: liabilities,
+        netWorth: assets - liabilities,
+        pinnedAccounts: mockAccounts.filter(a => a.isPinned),
+        accountGroups: {
+          bank: mockAccounts.filter(
+            a => a.type === 'bank' && !a.isPinned,
+          ),
+          ewallet: mockAccounts.filter(a => a.type === 'e-wallet'),
+          investment: mockAccounts.filter(a => a.type === 'investment'),
+          loan: mockAccounts.filter(a => a.type === 'loan'),
+        },
+      };
+    }, []);
+
+  // Auto-scroll effect
+  useEffect(() => {
+    if (!isActive) return;
+
+    let down = true;
+    const scroll = () => {
+      'worklet';
+      scrollTo(scrollRef, 0, down ? 9999 : 0, true);
+      down = !down;
+    };
+
+    const t1 = setTimeout(() => runOnJS(scroll)(), 2500);
+    const interval = setInterval(() => runOnJS(scroll)(), 8000);
+
+    return () => {
+      clearTimeout(t1);
+      clearInterval(interval);
+    };
+  }, [isActive]);
+
+  // -------------------
+  // Render
+  // -------------------
+  return (
+    <View style={styles.container}>
+      <Animated.ScrollView
+        ref={scrollRef}
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* Total Net Worth */}
+        <View style={styles.totalCard}>
+          <Text style={styles.totalLabel}>Total Net Worth</Text>
+          <Text style={styles.totalAmount}>{formatCurrency(netWorth)}</Text>
+        </View>
+
+        {/* Pinned */}
+        {pinnedAccounts.length > 0 && (
+          <Section title="Pinned" icon={<Pin size={16} color="#6366f1" />}>
+            {pinnedAccounts.map(acc => (
+              <MockAccountCard
+                key={acc.id}
+                icon={
+                  <Image
+                    source={institutionLogos[acc.institutionSlug]}
+                    style={styles.logo}
+                  />
+                }
+                name={acc.name}
+                displayNumber={formatDisplayNumber(acc)}
+                balance={formatCurrency(acc.balance)}
+                isLoan={acc.type === 'loan'}
+              />
+            ))}
+          </Section>
+        )}
+
+        {/* Banks */}
+        {accountGroups.bank.length > 0 && (
+          <Section title="Banks" icon={<Landmark size={16} />}>
+            {accountGroups.bank.map(acc => (
+              <MockAccountCard
+                key={acc.id}
+                icon={
+                  <Image
+                    source={institutionLogos[acc.institutionSlug]}
+                    style={styles.logo}
+                  />
+                }
+                name={acc.name}
+                displayNumber={formatDisplayNumber(acc)}
+                balance={formatCurrency(acc.balance)}
+              />
+            ))}
+          </Section>
+        )}
+
+        {/* E-Wallet */}
+        {accountGroups.ewallet.length > 0 && (
+          <Section title="E-Money" icon={<Wallet size={16} />}>
+            {accountGroups.ewallet.map(acc => (
+              <MockAccountCard
+                key={acc.id}
+                icon={
+                  <Image
+                    source={institutionLogos[acc.institutionSlug]}
+                    style={styles.logo}
+                  />
+                }
+                name={acc.name}
+                displayNumber={formatDisplayNumber(acc)}
+                balance={formatCurrency(acc.balance)}
+              />
+            ))}
+          </Section>
+        )}
+
+        {/* Investments */}
+        {accountGroups.investment.length > 0 && (
+          <Section title="Investments" icon={<Briefcase size={16} />}>
+            {accountGroups.investment.map(acc => (
+              <MockAccountCard
+                key={acc.id}
+                icon={
+                  <Image
+                    source={institutionLogos[acc.institutionSlug]}
+                    style={styles.logo}
+                  />
+                }
+                name={acc.name}
+                displayNumber={formatDisplayNumber(acc)}
+                balance={formatCurrency(acc.balance)}
+              />
+            ))}
+          </Section>
+        )}
+
+        {/* Loans */}
+        {accountGroups.loan.length > 0 && (
+          <Section title="Loans" icon={<Coins size={16} />}>
+            {accountGroups.loan.map(acc => (
+              <MockAccountCard
+                key={acc.id}
+                icon={
+                  <Image
+                    source={institutionLogos[acc.institutionSlug]}
+                    style={styles.logo}
+                  />
+                }
+                name={acc.name}
+                displayNumber={formatDisplayNumber(acc)}
+                balance={formatCurrency(acc.balance)}
+                isLoan
+              />
+            ))}
+          </Section>
+        )}
+      </Animated.ScrollView>
+    </View>
+  );
+}
+
+// -------------------
+// Section helper
+// -------------------
+const Section = ({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) => (
+  <View style={styles.sectionCard}>
+    <View style={styles.sectionHeader}>
+      {icon}
+      <Text style={styles.sectionTitle}>{title}</Text>
+    </View>
+    <View style={styles.sectionBody}>{children}</View>
+  </View>
+);
+
+// -------------------
+// Styles
+// -------------------
+const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: theme.spacing.large,
-    paddingVertical: theme.spacing.large,
-  },
-  cardContent: {
-    backgroundColor: theme.colors.card,
+    width: width * 0.9,
+    maxWidth: 360,
+    height: 600,
     borderRadius: 24,
-    padding: theme.spacing.medium,
-    borderColor: theme.colors.border,
-    borderWidth: 1,
-    width: '100%',
+    borderWidth: 2,
+    borderColor: '#818cf833',
+    backgroundColor: '#ffffffcc',
+    overflow: 'hidden',
+    alignSelf: 'center',
   },
-  graphContainer: {
-    height: 150,
-    backgroundColor: `${theme.colors.primary}20`,
+  scroll: { flex: 1 },
+  scrollContent: { padding: 8, paddingBottom: 24 },
+  totalCard: {
+    backgroundColor: '#fff',
     borderRadius: 16,
-    marginVertical: theme.spacing.large,
+    padding: 16,
+    marginBottom: 12,
+    elevation: 2,
   },
-  timeRangeContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginVertical: theme.spacing.medium,
+  totalLabel: { fontSize: 14, color: '#64748b' },
+  totalAmount: { fontSize: 22, fontWeight: 'bold', marginTop: 4 },
+  sectionCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    elevation: 2,
   },
-  timeRangeButton: {
-    paddingHorizontal: theme.spacing.medium,
-    paddingVertical: theme.spacing.small,
-    borderRadius: 8,
-  },
-  activeTimeRange: {
-    backgroundColor: theme.colors.primary,
-  },
-  timeRangeText: {
-    color: theme.colors.mutedForeground,
-    fontWeight: '600',
-  },
-  activeTimeRangeText: {
-    color: theme.colors.background,
-  },
-  pinnedContainer: {
-    marginTop: theme.spacing.large,
-  },
-  pinnedHeader: {
+  sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing.medium,
+    marginBottom: 8,
   },
-  pinnedTitle: {
-    color: theme.colors.mutedForeground,
-    marginLeft: theme.spacing.small,
+  sectionTitle: {
+    fontSize: 14,
     fontWeight: '600',
+    marginLeft: 6,
   },
-  bottomTextContainer: {
-    marginTop: theme.spacing.large,
+  sectionBody: { gap: 8 },
+  card: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12,
+    borderRadius: 12,
+    backgroundColor: '#f8fafc',
   },
-  bottomTitle: {
-    fontFamily: theme.fonts.serif,
-    fontSize: theme.fontSizes.xxl,
-    color: theme.colors.foreground,
-    textAlign: 'center',
-    marginBottom: theme.spacing.medium,
-    lineHeight: theme.lineHeights.loose,
+  cardInner: { flexDirection: 'row', alignItems: 'center', flex: 1 },
+  iconWrapper: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+    elevation: 1,
   },
-  bottomDescription: {
-    fontFamily: theme.fonts.sans,
-    fontSize: theme.fontSizes.medium,
-    color: theme.colors.mutedForeground,
-    textAlign: 'center',
-    marginTop: theme.spacing.medium,
-  },
+  logo: { width: 28, height: 28, resizeMode: 'contain' },
+  textWrapper: { flex: 1 },
+  cardTitle: { fontWeight: '600', fontSize: 14 },
+  cardSubtitle: { fontSize: 12, color: '#64748b', marginTop: 2 },
+  balance: { fontSize: 14, fontWeight: '600' },
+  negative: { color: '#ef4444' },
 });
-
-export default WelcomeDashboardMockup;

@@ -96,29 +96,33 @@ const WelcomeScreen = () => {
       >
         {slides.map((slide, index) => (
           <View key={index} style={[styles.slide, { width }]}>
-            <View style={styles.textContainer}>
-              {slide.icon && <slide.icon size={48} color={theme.colors.primary} style={styles.icon} />}
-              {index === 0 ? (
-                <View style={styles.titleContainer}>
-                  <Text style={styles.title}>{slide.title}</Text>
-                  <MaskedView
-                    style={styles.maskedView}
-                    maskElement={<Text style={[styles.title, styles.gradientText, { backgroundColor: 'transparent' }]}>{slide.gradientTitle}</Text>}
-                  >
-                    <LinearGradient
-                      colors={[theme.colors.primary, theme.colors.accent]}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 0 }}
+            {slide.icon === WelcomeDashboardMockup ? (
+              <WelcomeDashboardMockup isActive={index === 1} />
+            ) : (
+              <View style={styles.textContainer}>
+                {slide.icon && <slide.icon size={48} color={theme.colors.primary} style={styles.icon} />}
+                {index === 0 ? (
+                  <View style={styles.titleContainer}>
+                    <Text style={styles.title}>{slide.title}</Text>
+                    <MaskedView
+                      style={styles.maskedView}
+                      maskElement={<Text style={[styles.title, styles.gradientText, { backgroundColor: 'transparent' }]}>{slide.gradientTitle}</Text>}
                     >
-                      <Text style={[styles.title, styles.gradientText, { opacity: 0 }]}>{slide.gradientTitle}</Text>
-                    </LinearGradient>
-                  </MaskedView>
-                </View>
-              ) : (
-                <Text style={styles.title}>{slide.title}</Text>
-              )}
-              <Text style={styles.description}>{slide.description}</Text>
-            </View>
+                      <LinearGradient
+                        colors={[theme.colors.primary, theme.colors.accent]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                      >
+                        <Text style={[styles.title, styles.gradientText, { opacity: 0 }]}>{slide.gradientTitle}</Text>
+                      </LinearGradient>
+                    </MaskedView>
+                  </View>
+                ) : (
+                  <Text style={styles.title}>{slide.title}</Text>
+                )}
+                <Text style={styles.description}>{slide.description}</Text>
+              </View>
+            )}
           </View>
         ))}
       </Animated.ScrollView>
