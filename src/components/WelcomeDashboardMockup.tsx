@@ -187,11 +187,7 @@ const WelcomeDashboardMockup = ({ isActive }: { isActive?: boolean }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        maxWidth: 400,
         backgroundColor: '#0F0F0F', // A dark background
-        borderRadius: 16,
-        borderWidth: 1,
-        borderColor: 'rgba(59, 130, 246, 0.2)',
     },
     scrollViewContent: {
         paddingVertical: 20,
