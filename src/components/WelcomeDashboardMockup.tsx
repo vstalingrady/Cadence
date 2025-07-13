@@ -1,7 +1,8 @@
-import React, { useMemo, useEffect, useRef } from 'react';
+import React, { useMemo, useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, AppState } from 'react-native';
 import { Landmark, Briefcase, Wallet, Coins, Pin } from 'lucide-react-native';
 import theme from '~/theme/theme';
+import BalanceChart from './BalanceChart';
 
 // --- Mock Data (Copied from original file) ---
 type Account = {
@@ -40,6 +41,17 @@ const mockTransactions: Transaction[] = [
     { id: 'txn_14', accountId: 'acc_mandiri_payroll_4', amount: 15000000, date: '2024-07-15', description: 'Project Freelance Payment', category: 'Income' },
 ];
 
+const generateChartData = (netWorth: number) => {
+  const data = [];
+  for (let i = 30; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const fluctuation = (Math.random() - 0.5) * 0.1;
+    data.push({ date, netWorth: netWorth * (1 + fluctuation) });
+  }
+  return data;
+};
+
 
 // --- Helper Functions (Adapted for React Native) ---
 
@@ -76,10 +88,11 @@ const getAccountIcon = (slug: string) => {
 
 // --- Placeholder Components ---
 // A placeholder for the TotalBalance component which was imported in the original file.
-const TotalBalance = ({ title, amount }: { title: string, amount: number }) => (
+const TotalBalance = ({ title, amount, date }: { title: string, amount: number, date?: Date }) => (
     <View style={styles.totalBalanceContainer}>
         <Text style={styles.totalBalanceTitle}>{title}</Text>
         <Text style={styles.totalBalanceAmount}>{formatCurrency(amount)}</Text>
+        {date && <Text style={styles.totalBalanceDate}>{date.toLocaleDateString()}</Text>}
     </View>
 );
 
@@ -102,6 +115,7 @@ const MockAccountCard = ({ icon, name, displayNumber, balance, isLoan = false }:
 const WelcomeDashboardMockup = ({ isActive }: { isActive?: boolean }) => {
     const scrollRef = useRef<ScrollView>(null);
     const appState = useRef(AppState.currentState);
+    const [selectedPoint, setSelectedPoint] = useState(null);
 
     useEffect(() => {
         const subscription = AppState.addEventListener('change', nextAppState => {
@@ -143,6 +157,8 @@ const WelcomeDashboardMockup = ({ isActive }: { isActive?: boolean }) => {
         return { netWorth, pinnedAccounts, accountGroups };
     }, []);
 
+    const chartData = useMemo(() => generateChartData(netWorth), [netWorth]);
+
     const renderSection = (title: string, icon: React.ReactNode, accounts: Account[]) => {
         if (accounts.length === 0) return null;
         return (
@@ -170,7 +186,12 @@ const WelcomeDashboardMockup = ({ isActive }: { isActive?: boolean }) => {
     return (
         <View style={styles.container}>
             <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollViewContent}>
-                <TotalBalance title="Total Net Worth" amount={netWorth} />
+                <TotalBalance 
+                    title={selectedPoint ? 'Net Worth' : 'Total Net Worth'}
+                    amount={selectedPoint ? selectedPoint.point.netWorth : netWorth} 
+                    date={selectedPoint ? selectedPoint.point.date : null}
+                />
+                <BalanceChart chartData={chartData} onPointSelect={setSelectedPoint} />
                 
                 {renderSection('Pinned', <Pin color={theme.colors.primary} size={16} />, pinnedAccounts)}
                 {renderSection('Banks', <Landmark color={theme.colors.primary} size={16} />, accountGroups.bank)}
@@ -214,6 +235,11 @@ const styles = StyleSheet.create({
         color: theme.colors.foreground,
         fontSize: 28,
         fontWeight: 'bold',
+    },
+    totalBalanceDate: {
+        color: theme.colors.mutedForeground,
+        fontSize: 12,
+        marginTop: 4,
     },
     sectionContainer: {
         backgroundColor: theme.colors.card,
