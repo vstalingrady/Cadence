@@ -14,7 +14,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.cuan"
+    namespace "com.alignment.cadence"
     defaultConfig {
         applicationId "com.alignment.cadence"
         minSdkVersion rootProject.ext.minSdkVersion

@@ -1,4 +1,4 @@
-package com.cuan
+package com.alignment.cadence
 
 import android.app.Application
 import com.facebook.react.PackageList
