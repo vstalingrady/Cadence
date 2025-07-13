@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, AppState } from 'react-native';
-import { Landmark, Briefcase, Wallet, Coins, Pin } from 'lucide-react-native';
+import theme from '~/theme/theme';
 
 // --- Mock Data (Copied from original file) ---
 type Account = {
@@ -187,10 +187,10 @@ const WelcomeDashboardMockup = ({ isActive }: { isActive?: boolean }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0F0F0F', // A dark background
+        backgroundColor: theme.colors.background,
         borderRadius: 16,
         borderWidth: 1,
-        borderColor: 'rgba(59, 130, 246, 0.2)',
+        borderColor: theme.colors.border,
         marginTop: 80, // Add margin to the top
     },
     scrollViewContent: {
@@ -198,24 +198,24 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
     },
     totalBalanceContainer: {
-        backgroundColor: '#1A1A1A',
+        backgroundColor: theme.colors.muted,
         padding: 16,
         borderRadius: 12,
         marginBottom: 12,
         alignItems: 'center',
     },
     totalBalanceTitle: {
-        color: '#A0A0A0',
+        color: theme.colors.mutedForeground,
         fontSize: 14,
         marginBottom: 4,
     },
     totalBalanceAmount: {
-        color: '#FFFFFF',
+        color: theme.colors.foreground,
         fontSize: 28,
         fontWeight: 'bold',
     },
     sectionContainer: {
-        backgroundColor: '#1C1C1E',
+        backgroundColor: theme.colors.card,
         borderRadius: 12,
         padding: 16,
         marginBottom: 12,
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     sectionTitle: {
-        color: '#E5E5EA',
+        color: theme.colors.foreground,
         fontSize: 16,
         fontWeight: '600',
         marginLeft: 8,
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
         marginTop: 8,
     },
     card: {
-        backgroundColor: 'rgba(44, 44, 46, 0.8)',
+        backgroundColor: theme.colors.muted,
         borderRadius: 12,
         padding: 12,
         flexDirection: 'row',
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 8,
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: theme.colors.border,
     },
     cardHeader: {
         flexDirection: 'row',
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 8,
-        backgroundColor: 'white',
+        backgroundColor: theme.colors.background,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 12,
@@ -272,21 +272,21 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     cardName: {
-        color: '#FFFFFF',
+        color: theme.colors.foreground,
         fontSize: 14,
         fontWeight: '600',
     },
     cardDisplayNumber: {
-        color: '#8E8E93',
+        color: theme.colors.mutedForeground,
         fontSize: 12,
     },
     cardBalance: {
-        color: '#FFFFFF',
+        color: theme.colors.foreground,
         fontSize: 14,
         fontWeight: '600',
     },
     loanBalance: {
-        color: '#FF453A', // iOS destructive red
+        color: theme.colors.primary,
     },
 });
 
