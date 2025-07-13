@@ -3,6 +3,7 @@ import { View, Dimensions, StyleSheet, Text } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { format } from 'date-fns';
 import theme from '~/theme/theme';
+import { LinearGradient } from 'react-native-linear-gradient';
 
 type ChartDataPoint = {
     date: Date;
@@ -27,16 +28,15 @@ const BalanceChart = ({ chartData, onPointSelect }: BalanceChartProps) => {
 
     const data = {
         labels: chartData.map((d, i) => {
-            if (i === 0 || i === Math.floor(chartData.length / 2) || i === chartData.length - 1) {
-                return format(d.date, 'd MMM');
+            if (i % 5 === 0) { // Show fewer labels
+                return format(d.date, 'd');
             }
             return '';
         }),
         datasets: [
             {
                 data: chartData.map(d => d.netWorth),
-                color: (opacity = 1) => `rgba(59, 130, 246, ${opacity})`,
-                strokeWidth: 3,
+                strokeWidth: 2,
             },
         ],
     };
@@ -45,15 +45,15 @@ const BalanceChart = ({ chartData, onPointSelect }: BalanceChartProps) => {
         backgroundGradientFrom: theme.colors.card,
         backgroundGradientTo: theme.colors.card,
         decimalPlaces: 0,
-        color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+        color: (opacity = 1) => `rgba(255, 187, 0, ${opacity})`,
         labelColor: (opacity = 1) => `rgba(170, 170, 170, ${opacity})`,
         style: {
             borderRadius: 16,
         },
         propsForDots: {
-            r: '5',
+            r: '4',
             strokeWidth: '2',
-            stroke: theme.colors.primary,
+            stroke: theme.colors.accent,
         },
     };
 
@@ -65,15 +65,27 @@ const BalanceChart = ({ chartData, onPointSelect }: BalanceChartProps) => {
                 height={200}
                 chartConfig={chartConfig}
                 withInnerLines={false}
-                withOuterLines={true}
+                withOuterLines={false}
                 withVerticalLabels={true}
-                withHorizontalLabels={false}
+                withHorizontalLabels={true}
                 bezier
                 style={styles.chart}
                 onDataPointClick={({ index }) => {
                     const point = chartData[index];
                     onPointSelect({ point, index });
                 }}
+                renderGradient={({ from, to, fromOpacity, toOpacity }) => (
+                    <LinearGradient
+                        x1="0"
+                        y1="0"
+                        x2="1"
+                        y2="0"
+                        gradientUnits="userSpaceOnUse"
+                    >
+                        <stop offset="0" stopColor={from} stopOpacity={fromOpacity} />
+                        <stop offset="1" stopColor={to} stopOpacity={toOpacity} />
+                    </LinearGradient>
+                )}
             />
         </View>
     );
