@@ -175,6 +175,7 @@ const styles = StyleSheet.create({
   dashboardSlide: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   textContainer: {
     alignItems: 'center',
