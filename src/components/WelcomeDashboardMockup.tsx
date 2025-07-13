@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,9 @@ import {
   Dimensions,
   Animated,
 } from 'react-native';
+import { LineChart } from 'react-native-chart-kit';
+import { Pin, Landmark, Wallet, Briefcase, Coins } from 'lucide-react-native';
+import theme from '../theme/theme'; // Import the theme
 
 // Mock data - same as original
 const mockAccounts = [
@@ -24,7 +27,7 @@ const mockAccounts = [
     id: 'acc_bca_kredit_2',
     name: 'BCA Everyday Card',
     institutionSlug: 'bca',
-    type: 'loan', 
+    type: 'loan',
     balance: 4500000,
     accountNumber: '5588',
   },
@@ -59,10 +62,6 @@ const mockAccounts = [
     type: 'investment',
     balance: 75000000,
     accountNumber: 'CRPT',
-    holdings: [
-      { id: 'btc', name: 'Bitcoin', symbol: 'BTC', amount: 0.65, value: 45000000, logoUrl: 'https://placehold.co/48x48.png' },
-      { id: 'eth', name: 'Ethereum', symbol: 'ETH', amount: 5, value: 25000000, logoUrl: 'https://placehold.co/48x48.png' },
-    ]
   },
   {
     id: 'acc_kredivo_loan_7',
@@ -72,27 +71,6 @@ const mockAccounts = [
     balance: 5500000,
     accountNumber: 'LOAN',
   },
-];
-
-const mockTransactions = [
-  { id: 'txn_1', accountId: 'acc_bca_tahapan_1', amount: 55000000, date: '2024-07-25', description: 'Salary Deposit', category: 'Income' },
-  { id: 'txn_2', accountId: 'acc_bca_tahapan_1', amount: -1800000, date: '2024-07-24', description: 'Dinner at SKYE', category: 'Food and Drink' },
-  { id: 'txn_3', accountId: 'acc_bca_tahapan_1', amount: -3200000, date: '2024-07-19', description: 'Garuda Flight to Bali', category: 'Travel' },
-  { id: 'txn_4', accountId: 'acc_gopay_main_3', amount: -120000, date: '2024-07-26', description: "GoFood McDonald's", category: 'Food and Drink' },
-  { id: 'txn_5', accountId: 'acc_gopay_main_3', amount: -35000, date: '2024-07-23', description: 'Gojek Ride', category: 'Transportation' },
-  { id: 'txn_6', accountId: 'acc_bca_kredit_2', amount: -2500000, date: '2024-07-27', description: 'Shopping at Zara', category: 'Shopping' },
-  { id: 'txn_7', accountId: 'acc_bca_kredit_2', amount: -54999, date: '2024-07-27', description: 'Spotify Premium', category: 'Services' },
-  { id: 'txn_8', accountId: 'acc_mandiri_payroll_4', amount: 45000000, date: '2024-06-30', description: 'Bonus Tahunan', category: 'Income' },
-  { id: 'txn_9', accountId: 'acc_mandiri_payroll_4', amount: -250000, date: '2024-07-31', description: 'Biaya Admin', category: 'Fees'},
-  { id: 'txn_10', accountId: 'acc_kredivo_loan_7', amount: -5500000, date: '2024-07-01', description: 'Pembayaran Tagihan Kredivo', category: 'Payments' },
-  { id: 'txn_11', accountId: 'acc_bibit_main_5', amount: -25000000, date: '2024-07-02', description: 'Invest in Mutual Fund', category: 'Investments' },
-  { id: 'txn_12', accountId: 'acc_bca_tahapan_1', amount: -850000, date: '2024-07-05', description: 'Uniqlo Shopping', category: 'Shopping' },
-  { id: 'txn_13', accountId: 'acc_bca_tahapan_1', amount: -1200000, date: '2024-07-10', description: 'PLN & IndiHome Bill', category: 'Bills' },
-  { id: 'txn_14', accountId: 'acc_mandiri_payroll_4', amount: 15000000, date: '2024-07-15', description: 'Project Freelance Payment', category: 'Income' },
-  { id: 'txn_15', accountId: 'acc_pintu_main_6', amount: -10000000, date: '2024-07-18', description: 'Buy Bitcoin', category: 'Investments' },
-  { id: 'txn_16', accountId: 'acc_gopay_main_3', amount: -55000, date: '2024-07-28', description: 'Kopi Kenangan', category: 'Food and Drink' },
-  { id: 'txn_17', accountId: 'acc_bca_tahapan_1', amount: -750000, date: '2024-07-29', description: 'Groceries at Ranch Market', category: 'Groceries' },
-  { id: 'txn_18', accountId: 'acc_bca_tahapan_1', amount: 5000000, date: '2024-07-08', description: 'Reimbursement from Office', category: 'Income' },
 ];
 
 const formatCurrency = (amount) => {
@@ -132,13 +110,6 @@ const getAccountIcon = (slug) => {
   };
   return icons[slug] || 'https://placehold.co/32x32.png';
 };
-
-// Icon components (simplified text representations)
-const PinIcon = () => <Text style={styles.icon}></Text>;
-const LandmarkIcon = () => <Text style={styles.icon}>️</Text>;
-const WalletIcon = () => <Text style={styles.icon}></Text>;
-const BriefcaseIcon = () => <Text style={styles.icon}></Text>;
-const CoinsIcon = () => <Text style={styles.icon}></Text>;
 
 const MockAccountCard = ({ iconUrl, name, displayNumber, balance, isLoan = false }) => (
   <View style={styles.accountCard}>
@@ -183,7 +154,7 @@ const TotalBalanceCard = ({ netWorth, isActive }) => {
 
   const backgroundColor = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ['#f8f9fa', '#e3f2fd'],
+    outputRange: [theme.colors.card, theme.colors.muted],
   });
 
   return (
@@ -194,6 +165,53 @@ const TotalBalanceCard = ({ netWorth, isActive }) => {
   );
 };
 
+const NetWorthChart = ({ netWorth }) => {
+  const chartData = {
+    labels: ['-30d', '-15d', 'Today'],
+    datasets: [
+      {
+        data: [
+          netWorth * 0.95,
+          netWorth * 0.98,
+          netWorth,
+        ],
+      },
+    ],
+  };
+
+  return (
+    <View style={styles.chartContainer}>
+      <LineChart
+        data={chartData}
+        width={phoneWidth - 48}
+        height={180}
+        chartConfig={{
+          backgroundColor: theme.colors.card,
+          backgroundGradientFrom: theme.colors.card,
+          backgroundGradientTo: theme.colors.muted,
+          decimalPlaces: 0,
+          color: (opacity = 1) => `rgba(255, 191, 0, ${opacity})`,
+          labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+          style: {
+            borderRadius: 16,
+          },
+          propsForDots: {
+            r: '6',
+            strokeWidth: '2',
+            stroke: theme.colors.accent,
+          },
+        }}
+        bezier
+        style={{
+          marginVertical: theme.spacing.small,
+          borderRadius: 16,
+        }}
+      />
+    </View>
+  );
+};
+
+
 const WelcomeDashboardMockup = ({ isActive = false }) => {
   const scrollRef = useRef(null);
 
@@ -201,11 +219,11 @@ const WelcomeDashboardMockup = ({ isActive = false }) => {
     if (!isActive || !scrollRef.current) return;
 
     let scrollTimeout;
-    
+
     const animateScroll = () => {
       if (scrollRef.current) {
         scrollRef.current.scrollToEnd({ animated: true });
-        
+
         scrollTimeout = setTimeout(() => {
           if (scrollRef.current) {
             scrollRef.current.scrollTo({ y: 0, animated: true });
@@ -226,11 +244,11 @@ const WelcomeDashboardMockup = ({ isActive = false }) => {
   const totalAssets = mockAccounts
     .filter(acc => acc.type !== 'loan')
     .reduce((sum, acc) => sum + acc.balance, 0);
-  
+
   const totalLiabilities = mockAccounts
     .filter(acc => acc.type === 'loan')
     .reduce((sum, acc) => sum + acc.balance, 0);
-      
+
   const netWorth = totalAssets - totalLiabilities;
 
   const pinnedAccounts = mockAccounts.filter(a => a.isPinned);
@@ -251,19 +269,18 @@ const WelcomeDashboardMockup = ({ isActive = false }) => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          {/* Total Balance Card */}
           <TotalBalanceCard netWorth={netWorth} isActive={isActive} />
-          
-          {/* Pinned Account Section */}
+          <NetWorthChart netWorth={netWorth} />
+
           {pinnedAccounts.length > 0 && (
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
-                <PinIcon />
+                <Pin color={theme.colors.accent} size={theme.fontSizes.large} />
                 <Text style={styles.sectionTitle}>Pinned</Text>
               </View>
               <View style={styles.sectionContent}>
                 {pinnedAccounts.map(account => (
-                  <MockAccountCard 
+                  <MockAccountCard
                     key={account.id}
                     iconUrl={getAccountIcon(account.institutionSlug)}
                     name={account.name}
@@ -276,16 +293,15 @@ const WelcomeDashboardMockup = ({ isActive = false }) => {
             </View>
           )}
 
-          {/* Banks Section */}
           {accountGroups.bank.length > 0 && (
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
-                <LandmarkIcon />
+                <Landmark color={theme.colors.accent} size={theme.fontSizes.large} />
                 <Text style={styles.sectionTitle}>Banks</Text>
               </View>
               <View style={styles.sectionContent}>
                 {accountGroups.bank.map(account => (
-                  <MockAccountCard 
+                  <MockAccountCard
                     key={account.id}
                     iconUrl={getAccountIcon(account.institutionSlug)}
                     name={account.name}
@@ -297,16 +313,15 @@ const WelcomeDashboardMockup = ({ isActive = false }) => {
             </View>
           )}
 
-          {/* E-Money Section */}
           {accountGroups.ewallet.length > 0 && (
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
-                <WalletIcon />
+                <Wallet color={theme.colors.accent} size={theme.fontSizes.large} />
                 <Text style={styles.sectionTitle}>E-Money</Text>
               </View>
               <View style={styles.sectionContent}>
                 {accountGroups.ewallet.map(account => (
-                  <MockAccountCard 
+                  <MockAccountCard
                     key={account.id}
                     iconUrl={getAccountIcon(account.institutionSlug)}
                     name={account.name}
@@ -318,16 +333,15 @@ const WelcomeDashboardMockup = ({ isActive = false }) => {
             </View>
           )}
 
-          {/* Investments Section */}
           {accountGroups.investment.length > 0 && (
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
-                <BriefcaseIcon />
+                <Briefcase color={theme.colors.accent} size={theme.fontSizes.large} />
                 <Text style={styles.sectionTitle}>Investments</Text>
               </View>
               <View style={styles.sectionContent}>
                 {accountGroups.investment.map(account => (
-                  <MockAccountCard 
+                  <MockAccountCard
                     key={account.id}
                     iconUrl={getAccountIcon(account.institutionSlug)}
                     name={account.name}
@@ -339,16 +353,15 @@ const WelcomeDashboardMockup = ({ isActive = false }) => {
             </View>
           )}
 
-          {/* Loans Section */}
           {accountGroups.loan.length > 0 && (
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
-                <CoinsIcon />
+                <Coins color={theme.colors.accent} size={theme.fontSizes.large} />
                 <Text style={styles.sectionTitle}>Loans</Text>
               </View>
               <View style={styles.sectionContent}>
                 {accountGroups.loan.map(account => (
-                  <MockAccountCard 
+                  <MockAccountCard
                     key={account.id}
                     iconUrl={getAccountIcon(account.institutionSlug)}
                     name={account.name}
@@ -374,62 +387,52 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: theme.colors.background,
     padding: 20,
   },
   phoneFrame: {
     width: phoneWidth,
     height: 600,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.background,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: '#e0e0e0',
+    borderColor: theme.colors.border,
     padding: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 8,
   },
   scrollView: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: theme.colors.background,
     borderRadius: 16,
   },
   scrollContent: {
     padding: 12,
   },
   totalBalanceCard: {
-    backgroundColor: '#ffffff',
     padding: 20,
     borderRadius: 16,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   totalBalanceTitle: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: theme.fontSizes.medium,
+    fontFamily: theme.fonts.sans,
+    color: theme.colors.mutedForeground,
     marginBottom: 8,
   },
   totalBalanceAmount: {
-    fontSize: 24,
+    fontSize: theme.fontSizes.xxl,
+    fontFamily: theme.fonts.serif,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.colors.foreground,
+  },
+  chartContainer: {
+    alignItems: 'center',
+    marginBottom: theme.spacing.medium,
   },
   section: {
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.card,
     padding: 16,
     borderRadius: 16,
     marginBottom: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -437,23 +440,24 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: theme.fontSizes.large,
+    fontFamily: theme.fonts.sans,
     fontWeight: '600',
-    color: '#333',
+    color: theme.colors.foreground,
     marginLeft: 8,
   },
   sectionContent: {
     gap: 8,
   },
   accountCard: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: theme.colors.muted,
     padding: 12,
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: '#e9ecef',
+    borderColor: theme.colors.border,
   },
   accountCardContent: {
     flexDirection: 'row',
@@ -463,16 +467,11 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 40,
     height: 40,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.background,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
   },
   accountIcon: {
     width: 28,
@@ -483,28 +482,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   accountName: {
-    fontSize: 14,
+    fontSize: theme.fontSizes.medium,
+    fontFamily: theme.fonts.sans,
     fontWeight: '600',
-    color: '#333',
+    color: theme.colors.foreground,
   },
   accountNumber: {
-    fontSize: 12,
-    color: '#666',
+    fontSize: theme.fontSizes.small,
+    fontFamily: theme.fonts.sans,
+    color: theme.colors.mutedForeground,
     marginTop: 2,
   },
   balanceContainer: {
     alignItems: 'flex-end',
   },
   balance: {
-    fontSize: 14,
+    fontSize: theme.fontSizes.medium,
+    fontFamily: theme.fonts.sans,
     fontWeight: '600',
-    color: '#333',
+    color: theme.colors.foreground,
   },
   loanBalance: {
-    color: '#dc3545',
-  },
-  icon: {
-    fontSize: 16,
+    color: theme.colors.primary,
   },
 });
 
