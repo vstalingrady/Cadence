@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, AppState } from 'react-native';
+import { Landmark, Briefcase, Wallet, Coins, Pin } from 'lucide-react-native';
 import theme from '~/theme/theme';
 
 // --- Mock Data (Copied from original file) ---
