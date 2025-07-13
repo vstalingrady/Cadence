@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   dashboardSlide: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    paddingHorizontal: theme.spacing.large,
   },
   textContainer: {
     alignItems: 'center',
