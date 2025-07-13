@@ -1,11 +1,9 @@
 import React, { useMemo, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, AppState, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, AppState } from 'react-native';
 import { Landmark, Briefcase, Wallet, Coins, Pin } from 'lucide-react-native';
-import TotalBalance from './TotalBalance';
+import theme from '~/theme/theme';
 
-// --- Mock Data ---
-// In a real app, this data would likely come from an API or a global state management solution.
-
+// --- Mock Data (Copied from original file) ---
 type Account = {
   id: string;
   name: string;
@@ -14,6 +12,7 @@ type Account = {
   balance: number;
   accountNumber: string;
   isPinned?: boolean;
+  holdings?: any[]; // Simplified for this example
 };
 
 type Transaction = {
@@ -25,13 +24,14 @@ type Transaction = {
     category: string;
 };
 
-// Example mock data is kept here for demonstration purposes.
 const mockAccounts: Account[] = [
     { id: 'acc_bca_tahapan_1', name: 'BCA Tahapan Gold', institutionSlug: 'bca', type: 'bank', balance: 85200501, accountNumber: '2847', isPinned: true },
     { id: 'acc_bca_kredit_2', name: 'BCA Everyday Card', institutionSlug: 'bca', type: 'loan', balance: 4500000, accountNumber: '5588' },
     { id: 'acc_gopay_main_3', name: 'GoPay', institutionSlug: 'gopay', type: 'e-wallet', balance: 1068000, accountNumber: '7890' },
     { id: 'acc_mandiri_payroll_4', name: 'Mandiri Payroll', institutionSlug: 'mandiri', type: 'bank', balance: 42500000, accountNumber: '5566' },
     { id: 'acc_bibit_main_5', name: 'Bibit Portfolio', institutionSlug: 'bibit', type: 'investment', balance: 125000000, accountNumber: 'IVST' },
+    { id: 'acc_pintu_main_6', name: 'Pintu Crypto', institutionSlug: 'pintu', type: 'investment', balance: 75000000, accountNumber: 'CRPT' },
+    { id: 'acc_kredivo_loan_7', name: 'Kredivo PayLater', institutionSlug: 'kredivo', type: 'loan', balance: 5500000, accountNumber: 'LOAN' },
 ];
 
 const mockTransactions: Transaction[] = [
@@ -41,7 +41,7 @@ const mockTransactions: Transaction[] = [
 ];
 
 
-// --- Helper Functions ---
+// --- Helper Functions (Adapted for React Native) ---
 
 const formatCurrency = (amount: number) => new Intl.NumberFormat('id-ID', {
     style: 'currency',
@@ -51,8 +51,8 @@ const formatCurrency = (amount: number) => new Intl.NumberFormat('id-ID', {
 
 const formatDisplayNumber = (account: Account): string => {
     const { accountNumber, type } = account;
-    if (type === 'investment') return 'Portfolio';
-    if (type === 'loan') return 'Outstanding Debt';
+    if (type === 'investment') return '';
+    if (type === 'loan') return 'Outstanding debt';
     if (accountNumber && accountNumber.length > 4) {
         return `...${accountNumber.substring(accountNumber.length - 4)}`;
     }
@@ -64,56 +64,54 @@ const getAccountIcon = (slug: string) => {
         bca: 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia_logo.svg',
         gopay: 'https://upload.wikimedia.org/wikipedia/commons/8/86/Gopay_logo.svg',
         bibit: 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Bibit.id_logo.svg',
+        pintu: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Pintu_logo.svg/2560px-Pintu_logo.svg.png',
+        kredivo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Kredivo_logo.svg/2560px-Kredivo_logo.svg.png',
         mandiri: 'https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo.svg',
     };
+    // Note: For SVG images, you might need react-native-svg-uri or a similar library.
+    // For this example, we assume PNGs or that the app is configured to handle SVGs.
     return <Image source={{ uri: icons[slug] }} style={styles.accountIconImage} resizeMode="contain" />;
 };
 
 
-// --- Sub-components for better structure ---
-
-const MockAccountCard = ({ account }: { account: Account }) => (
-    <View style={styles.card}>
-        <View style={styles.cardHeader}>
-            <View style={styles.cardIconContainer}>{getAccountIcon(account.institutionSlug)}</View>
-            <View style={styles.cardTextContainer}>
-                <Text style={styles.cardName} numberOfLines={1}>{account.name}</Text>
-                <Text style={styles.cardDisplayNumber}>{formatDisplayNumber(account)}</Text>
-            </View>
-        </View>
-        <Text style={[styles.cardBalance, account.type === 'loan' && styles.loanBalance]}>
-            {formatCurrency(account.balance)}
-        </Text>
+// --- Placeholder Components ---
+// A placeholder for the TotalBalance component which was imported in the original file.
+const TotalBalance = ({ title, amount }: { title: string, amount: number }) => (
+    <View style={styles.totalBalanceContainer}>
+        <Text style={styles.totalBalanceTitle}>{title}</Text>
+        <Text style={styles.totalBalanceAmount}>{formatCurrency(amount)}</Text>
     </View>
 );
 
-const AccountSection = ({ title, icon, accounts }: { title: string, icon: React.ReactNode, accounts: Account[] }) => {
-    if (accounts.length === 0) return null;
-    return (
-        <View style={styles.sectionContainer}>
-            <View style={styles.sectionHeader}>
-                {icon}
-                <Text style={styles.sectionTitle}>{title}</Text>
-            </View>
-            <View style={styles.sectionContent}>
-                {accounts.map(account => <MockAccountCard key={account.id} account={account} />)}
+
+// --- Main Components ---
+
+const MockAccountCard = ({ icon, name, displayNumber, balance, isLoan = false }: { icon: React.ReactNode, name: string, displayNumber: string, balance: string, isLoan?: boolean }) => (
+    <View style={styles.card}>
+        <View style={styles.cardHeader}>
+            <View style={styles.cardIconContainer}>{icon}</View>
+            <View style={styles.cardTextContainer}>
+                <Text style={styles.cardName} numberOfLines={1}>{name}</Text>
+                {displayNumber && <Text style={styles.cardDisplayNumber}>{displayNumber}</Text>}
             </View>
         </View>
-    );
-};
+        <Text style={[styles.cardBalance, isLoan && styles.loanBalance]}>{balance}</Text>
+    </View>
+);
 
-
-// --- Main WelcomeDashboard Component ---
-
-const WelcomeDashboard = ({ isActive = true }: { isActive?: boolean }) => {
+const WelcomeDashboardMockup = ({ isActive }: { isActive?: boolean }) => {
     const scrollRef = useRef<ScrollView>(null);
+    const appState = useRef(AppState.currentState);
 
-    // This hook manages the auto-scrolling animation.
     useEffect(() => {
-        let scrollInterval: NodeJS.Timeout | null = null;
-        
+        const subscription = AppState.addEventListener('change', nextAppState => {
+            appState.current = nextAppState;
+        });
+
+        let scrollInterval: NodeJS.Timeout;
+
         const animateScroll = () => {
-            if (isActive) {
+             if (appState.current === 'active' && isActive) {
                 scrollRef.current?.scrollToEnd({ animated: true });
                 setTimeout(() => {
                     scrollRef.current?.scrollTo({ y: 0, animated: true });
@@ -122,77 +120,103 @@ const WelcomeDashboard = ({ isActive = true }: { isActive?: boolean }) => {
         };
 
         if (isActive) {
-            // Start the animation after a short delay
-            setTimeout(() => {
-                animateScroll();
-                scrollInterval = setInterval(animateScroll, 8000);
-            }, 2000);
+            scrollInterval = setInterval(animateScroll, 8000);
         }
 
         return () => {
-            if (scrollInterval) clearInterval(scrollInterval);
+            subscription.remove();
+            if(scrollInterval) clearInterval(scrollInterval);
         };
     }, [isActive]);
 
-    // This hook calculates financial summaries and groups accounts.
     const { netWorth, pinnedAccounts, accountGroups } = useMemo(() => {
         const totalAssets = mockAccounts.filter(acc => acc.type !== 'loan').reduce((sum, acc) => sum + acc.balance, 0);
         const totalLiabilities = mockAccounts.filter(acc => acc.type === 'loan').reduce((sum, acc) => sum + acc.balance, 0);
-        
-        return {
-            netWorth: totalAssets - totalLiabilities,
-            pinnedAccounts: mockAccounts.filter(a => a.isPinned),
-            accountGroups: {
-                bank: mockAccounts.filter(a => a.type === 'bank' && !a.isPinned),
-                ewallet: mockAccounts.filter(a => a.type === 'e-wallet' && !a.isPinned),
-                investment: mockAccounts.filter(a => a.type === 'investment' && !a.isPinned),
-                loan: mockAccounts.filter(a => a.type === 'loan' && !a.isPinned),
-            },
+        const netWorth = totalAssets - totalLiabilities;
+        const pinnedAccounts = mockAccounts.filter(a => a.isPinned);
+        const accountGroups = {
+            bank: mockAccounts.filter(a => a.type === 'bank' && !a.isPinned),
+            ewallet: mockAccounts.filter(a => a.type === 'e-wallet'),
+            investment: mockAccounts.filter(a => a.type === 'investment'),
+            loan: mockAccounts.filter(a => a.type === 'loan'),
         };
+        return { netWorth, pinnedAccounts, accountGroups };
     }, []);
 
-    return (
-        <SafeAreaView style={styles.safeArea}>
-            <View style={styles.container}>
-                <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollViewContent}>
-                    <TotalBalance
-                        title="Total Net Worth"
-                        amount={netWorth}
-                    />
-                    
-                    <AccountSection title='Pinned' icon={<Pin color="#3b82f6" size={16} />} accounts={pinnedAccounts} />
-                    <AccountSection title='Bank Accounts' icon={<Landmark color="#A0A0A0" size={16} />} accounts={accountGroups.bank} />
-                    <AccountSection title='E-Money' icon={<Wallet color="#A0A0A0" size={16} />} accounts={accountGroups.ewallet} />
-                    <AccountSection title='Investments' icon={<Briefcase color="#A0A0A0" size={16} />} accounts={accountGroups.investment} />
-                    <AccountSection title='Loans' icon={<Coins color="#A0A0A0" size={16} />} accounts={accountGroups.loan} />
-                </ScrollView>
+    const renderSection = (title: string, icon: React.ReactNode, accounts: Account[]) => {
+        if (accounts.length === 0) return null;
+        return (
+            <View style={styles.sectionContainer}>
+                <View style={styles.sectionHeader}>
+                    {icon}
+                    <Text style={styles.sectionTitle}>{title}</Text>
+                </View>
+                <View style={styles.sectionContent}>
+                    {accounts.map(account => (
+                        <MockAccountCard
+                            key={account.id}
+                            icon={getAccountIcon(account.institutionSlug)}
+                            name={account.name}
+                            displayNumber={formatDisplayNumber(account)}
+                            balance={formatCurrency(account.balance)}
+                            isLoan={account.type === 'loan'}
+                        />
+                    ))}
+                </View>
             </View>
-        </SafeAreaView>
+        );
+    };
+
+    return (
+        <View style={styles.container}>
+            <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollViewContent}>
+                <TotalBalance title="Total Net Worth" amount={netWorth} />
+                
+                {renderSection('Pinned', <Pin color={theme.colors.primary} size={16} />, pinnedAccounts)}
+                {renderSection('Banks', <Landmark color={theme.colors.primary} size={16} />, accountGroups.bank)}
+                {renderSection('E-Money', <Wallet color={theme.colors.primary} size={16} />, accountGroups.ewallet)}
+                {renderSection('Investments', <Briefcase color={theme.colors.primary} size={16} />, accountGroups.investment)}
+                {renderSection('Loans', <Coins color={theme.colors.primary} size={16} />, accountGroups.loan)}
+
+            </ScrollView>
+        </View>
     );
 };
 
-
-// --- Styles ---
+// --- Styles (Translated from Tailwind CSS) ---
 
 const styles = StyleSheet.create({
-    safeArea: {
-        flex: 1,
-        backgroundColor: '#000000',
-    },
     container: {
         flex: 1,
-        backgroundColor: '#0F0F0F',
+        backgroundColor: theme.colors.background,
         borderRadius: 16,
         borderWidth: 1,
-        borderColor: 'rgba(59, 130, 246, 0.2)',
-        padding: 8,
-        margin: 16,
+        borderColor: theme.colors.border,
+        marginTop: 80, // Add margin to the top
     },
     scrollViewContent: {
-        paddingBottom: 20,
+        paddingVertical: 20,
+        paddingHorizontal: 16,
+    },
+    totalBalanceContainer: {
+        backgroundColor: theme.colors.muted,
+        padding: 16,
+        borderRadius: 12,
+        marginBottom: 12,
+        alignItems: 'center',
+    },
+    totalBalanceTitle: {
+        color: theme.colors.mutedForeground,
+        fontSize: 14,
+        marginBottom: 4,
+    },
+    totalBalanceAmount: {
+        color: theme.colors.foreground,
+        fontSize: 28,
+        fontWeight: 'bold',
     },
     sectionContainer: {
-        backgroundColor: '#1C1C1E',
+        backgroundColor: theme.colors.card,
         borderRadius: 12,
         padding: 16,
         marginBottom: 12,
@@ -203,7 +227,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     sectionTitle: {
-        color: '#E5E5EA',
+        color: theme.colors.foreground,
         fontSize: 16,
         fontWeight: '600',
         marginLeft: 8,
@@ -212,13 +236,15 @@ const styles = StyleSheet.create({
         marginTop: 8,
     },
     card: {
-        backgroundColor: 'rgba(44, 44, 46, 0.8)',
+        backgroundColor: theme.colors.muted,
         borderRadius: 12,
         padding: 12,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 8,
+        borderWidth: 1,
+        borderColor: theme.colors.border,
     },
     cardHeader: {
         flexDirection: 'row',
@@ -228,11 +254,16 @@ const styles = StyleSheet.create({
     cardIconContainer: {
         width: 40,
         height: 40,
-        borderRadius: 20,
-        backgroundColor: 'white',
+        borderRadius: 8,
+        backgroundColor: theme.colors.background,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 12,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.41,
+        elevation: 2,
     },
     accountIconImage: {
         width: 32,
@@ -242,23 +273,22 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     cardName: {
-        color: '#FFFFFF',
+        color: theme.colors.foreground,
         fontSize: 14,
         fontWeight: '600',
     },
     cardDisplayNumber: {
-        color: '#8E8E93',
+        color: theme.colors.mutedForeground,
         fontSize: 12,
-        marginTop: 2,
     },
     cardBalance: {
-        color: '#FFFFFF',
+        color: theme.colors.foreground,
         fontSize: 14,
         fontWeight: '600',
     },
     loanBalance: {
-        color: '#FF453A', // iOS destructive red
+        color: theme.colors.primary,
     },
 });
 
-export default WelcomeDashboard;
+export default WelcomeDashboardMockup;
