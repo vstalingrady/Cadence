@@ -171,11 +171,11 @@ const WelcomeDashboardMockup = ({ isActive }: { isActive?: boolean }) => {
             <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollViewContent}>
                 <TotalBalance title="Total Net Worth" amount={netWorth} />
                 
-                {renderSection('Pinned', <Pin color="#3b82f6" size={16} />, pinnedAccounts)}
-                {renderSection('Banks', <Landmark color="#6b7280" size={16} />, accountGroups.bank)}
-                {renderSection('E-Money', <Wallet color="#6b7280" size={16} />, accountGroups.ewallet)}
-                {renderSection('Investments', <Briefcase color="#6b7280" size={16} />, accountGroups.investment)}
-                {renderSection('Loans', <Coins color="#6b7280" size={16} />, accountGroups.loan)}
+                {renderSection('Pinned', <Pin color={theme.colors.primary} size={16} />, pinnedAccounts)}
+                {renderSection('Banks', <Landmark color={theme.colors.primary} size={16} />, accountGroups.bank)}
+                {renderSection('E-Money', <Wallet color={theme.colors.primary} size={16} />, accountGroups.ewallet)}
+                {renderSection('Investments', <Briefcase color={theme.colors.primary} size={16} />, accountGroups.investment)}
+                {renderSection('Loans', <Coins color={theme.colors.primary} size={16} />, accountGroups.loan)}
 
             </ScrollView>
         </View>
