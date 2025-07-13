@@ -3,7 +3,7 @@ import { View, Dimensions, StyleSheet, Text } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { format } from 'date-fns';
 import theme from '~/theme/theme';
-import { LinearGradient } from 'react-native-linear-gradient';
+import { LinearGradient, Stop } from 'react-native-svg';
 
 type ChartDataPoint = {
     date: Date;
