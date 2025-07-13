@@ -223,28 +223,24 @@ const WelcomeDashboardMockup = ({ isActive = false }) => {
     };
   }, [isActive]);
 
-  const { totalAssets, totalLiabilities, netWorth, pinnedAccounts, accountGroups } = useMemo(() => {
-    const totalAssets = mockAccounts
-      .filter(acc => acc.type !== 'loan')
-      .reduce((sum, acc) => sum + acc.balance, 0);
-    
-    const totalLiabilities = mockAccounts
-      .filter(acc => acc.type === 'loan')
-      .reduce((sum, acc) => sum + acc.balance, 0);
-        
-    const netWorth = totalAssets - totalLiabilities;
+  const totalAssets = mockAccounts
+    .filter(acc => acc.type !== 'loan')
+    .reduce((sum, acc) => sum + acc.balance, 0);
+  
+  const totalLiabilities = mockAccounts
+    .filter(acc => acc.type === 'loan')
+    .reduce((sum, acc) => sum + acc.balance, 0);
+      
+  const netWorth = totalAssets - totalLiabilities;
 
-    const pinnedAccounts = mockAccounts.filter(a => a.isPinned);
+  const pinnedAccounts = mockAccounts.filter(a => a.isPinned);
 
-    const accountGroups = {
-      bank: mockAccounts.filter(a => a.type === 'bank' && !a.isPinned),
-      ewallet: mockAccounts.filter(a => a.type === 'e-wallet'),
-      investment: mockAccounts.filter(a => a.type === 'investment'),
-      loan: mockAccounts.filter(a => a.type === 'loan'),
-    };
-
-    return { totalAssets, totalLiabilities, netWorth, pinnedAccounts, accountGroups };
-  }, []);
+  const accountGroups = {
+    bank: mockAccounts.filter(a => a.type === 'bank' && !a.isPinned),
+    ewallet: mockAccounts.filter(a => a.type === 'e-wallet'),
+    investment: mockAccounts.filter(a => a.type === 'investment'),
+    loan: mockAccounts.filter(a => a.type === 'loan'),
+  };
 
   return (
     <View style={styles.container}>
