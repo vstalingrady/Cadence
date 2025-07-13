@@ -192,13 +192,10 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         borderWidth: 1,
         borderColor: 'rgba(59, 130, 246, 0.2)',
-        paddingTop: 20,
-        paddingBottom: 8,
-        paddingHorizontal: 4,
     },
     scrollViewContent: {
-        paddingVertical: 8,
-        paddingHorizontal: 2,
+        paddingVertical: 20,
+        paddingHorizontal: 12,
     },
     totalBalanceContainer: {
         backgroundColor: '#1A1A1A',
