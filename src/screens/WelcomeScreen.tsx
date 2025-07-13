@@ -95,7 +95,7 @@ const WelcomeScreen = () => {
         contentContainerStyle={{ paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }}
       >
         {slides.map((slide, index) => (
-          <View key={index} style={[styles.slide, { width }]}>
+          <View key={index} style={[slide.icon === WelcomeDashboardMockup ? styles.dashboardSlide : styles.slide, { width }]}>
             {slide.icon === WelcomeDashboardMockup ? (
               <WelcomeDashboardMockup isActive={index === 1} />
             ) : (
@@ -171,6 +171,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: theme.spacing.large,
+  },
+  dashboardSlide: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   textContainer: {
     alignItems: 'center',
