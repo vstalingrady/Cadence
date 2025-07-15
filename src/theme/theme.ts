@@ -1,35 +1,49 @@
-const theme = {
-  colors: {
-    primary: '#ff8800',
-    accent: '#ffbf00',
-    background: '#100b09',
-    foreground: '#fbfaf9',
-    muted: '#281e1b',
-    mutedForeground: '#a8a6a3',
-    card: '#2d1c10',
-    border: '#281e1b',
+export const colors = {
+  light: {
+    background: '#FFFFFF',
+    foreground: '#0A0A0A',
+    card: '#FDF8F3',
+    cardForeground: '#0A0A0A',
+    popover: '#FDF8F3',
+    popoverForeground: '#0A0A0A',
+    primary: '#F5A623',
+    primaryForeground: '#161616',
+    secondary: '#F5F5F5',
+    secondaryForeground: '#161616',
+    muted: '#F5F5F5',
+    mutedForeground: '#737373',
+    accent: '#FFC700',
+    accentForeground: '#161616',
+    destructive: '#F44336',
+    destructiveForeground: '#FAFAFA',
+    border: '#E5E5E5',
+    input: '#E5E5E5',
+    ring: '#F5A623',
   },
-  fonts: {
-    sans: 'PlusJakartaSans-Regular',
-    serif: 'Domine-Regular',
+  dark: {
+    background: '#1A1A1A',
+    foreground: '#FAFAFA',
+    card: '#2C2C2C',
+    cardForeground: '#FAFAFA',
+    popover: '#2C2C2C',
+    popoverForeground: '#FAFAFA',
+    primary: '#F5A623',
+    primaryForeground: '#1A1A1A',
+    secondary: '#2C2C2C',
+    secondaryForeground: '#FAFAFA',
+    muted: '#2C2C2C',
+    mutedForeground: '#A3A3A3',
+    accent: '#FFC700',
+    accentForeground: '#FAFAFA',
+    destructive: '#EF5350',
+    destructiveForeground: '#FAFAFA',
+    border: '#2C2C2C',
+    input: '#2C2C2C',
+    ring: '#F5A623',
   },
-  fontSizes: {
-    small: 12,
-    medium: 16,
-    large: 20,
-    xl: 24,
-    xxl: 32,
-  },
-  spacing: {
-    small: 8,
-    medium: 16,
-    large: 24,
-  },
-  lineHeights: {
-    tight: 20,
-    normal: 24,
-    loose: 32,
-  }
 };
 
-export default theme;
+export const theme = {
+  colors,
+  // ...other theme properties like spacing, typography, etc.
+};

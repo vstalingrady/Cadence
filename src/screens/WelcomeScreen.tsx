@@ -1,151 +1,174 @@
-import React from 'react';
-import { View, Text, StyleSheet, useWindowDimensions, Platform, StatusBar, SafeAreaView } from 'react-native';
-import theme from '~/theme/theme';
-import WelcomeHeader from '~/components/WelcomeHeader';
-import MaskedView from '@react-native-masked-view/masked-view';
-import LinearGradient from 'react-native-linear-gradient';
-import Animated, { useSharedValue, useAnimatedScrollHandler, useAnimatedStyle, interpolate } from 'react-native-reanimated';
-import WelcomeDashboard from '~/components/WelcomeDashboard';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Dimensions } from 'react-native';
+import Carousel from 'react-native-reanimated-carousel';
+import Animated, { useAnimatedStyle, interpolate, Extrapolate } from 'react-native-reanimated';
+import { BarChart2, Zap, PiggyBank, Sparkles, ClipboardList, ShieldCheck } from 'lucide-react-native';
+import { theme } from '../theme/theme';
+import Button from '../components/ui/Button';
+import WelcomeDashboardMockup from '../components/mockups/WelcomeDashboardMockup';
+import WelcomePaymentMockup from '../components/mockups/WelcomePaymentMockup';
+import WelcomeBudgetsMockup from '../components/mockups/WelcomeBudgetsMockup';
+import WelcomeInsightsMockup from '../components/mockups/WelcomeInsightsMockup';
+import WelcomeVaultsMockup from '../components/mockups/WelcomeVaultsMockup';
+import WelcomeSecurityMockup from '../components/mockups/WelcomeSecurityMockup';
 
-const WelcomeScreen = () => {
-  const { width } = useWindowDimensions();
-  const scrollX = useSharedValue(0);
+const { width } = Dimensions.get('window');
 
-  const slides = [
+const slides = [
     {
-      title: 'All Your Money,',
-      gradientTitle: 'One Single App.',
-      description: 'Semua securely connects to all your accounts, giving you a complete financial overview and AI-powered insights to grow your wealth.',
-      icon: null,
+        type: 'hero',
+        title: 'All Your Money, \nOne Single App.',
+        description: 'Semua securely connects to all your accounts, giving you a complete financial overview and AI-powered insights to grow your wealth.',
     },
     {
-      icon: WelcomeDashboard,
+        type: 'feature',
+        icon: BarChart2,
+        title: 'Unified Dashboard',
+        description: 'See your complete financial picture in one glance. Track balances across all your linked accounts in real-time.',
+        mockup: WelcomeDashboardMockup,
     },
     {
-      title: 'Effortless Payments',
-      description: 'Pay bills, transfer funds, and top-up e-wallets seamlessly from any of your accounts, all from one central hub.',
-      icon: null,
+        type: 'feature',
+        icon: Zap,
+        title: 'Effortless Payments',
+        description: 'Pay bills, transfer funds, and top-up e-wallets seamlessly from any of your accounts, all from one central hub.',
+        mockup: WelcomePaymentMockup,
     },
     {
-      title: 'Smart Budgeting',
-      description: 'Set custom budgets, track your spending against them in real-time, and get coached by our AI to stay on track.',
-      icon: null,
+        type: 'feature',
+        icon: ClipboardList,
+        title: 'Smart Budgeting',
+        description: 'Set custom budgets, track your spending against them in real-time, and get coached by our AI to stay on track.',
+        mockup: WelcomeBudgetsMockup,
     },
     {
-      title: 'AI-Powered Insights',
-      description: 'Let our AI analyze your spending to find personalized saving opportunities and create actionable financial plans.',
-      icon: null,
+        type: 'feature',
+        icon: Sparkles,
+        title: 'AI-Powered Insights',
+        description: 'Let our AI analyze your spending to find personalized saving opportunities and create actionable financial plans.',
+        mockup: WelcomeInsightsMockup,
     },
     {
-      title: 'Automated Savings',
-      description: 'Create savings vaults for your goals. Automate contributions with round-ups and scheduled transfers.',
-      icon: null,
+        type: 'feature',
+        icon: PiggyBank,
+        title: 'Automated Savings',
+        description: 'Create savings vaults for your goals. Automate contributions with round-ups and scheduled transfers.',
+        mockup: WelcomeVaultsMockup,
     },
     {
-      title: 'Bank-Grade Security',
-      description: 'Your data is protected with the highest bank-grade security standards, including 256-bit AES encryption. Your privacy is our priority.',
-      icon: null,
+        type: 'feature',
+        icon: ShieldCheck,
+        title: 'Bank-Grade Security',
+        description: 'Your data is protected with the highest bank-grade security standards, including 256-bit AES encryption. Your privacy is our priority.',
+        mockup: WelcomeSecurityMockup,
     },
     {
-      title: 'Sign Up',
-      description: '',
-      icon: null,
-    },
-  ];
+        type: 'signup',
+        title: 'Create Your Account',
+        description: 'Join Semua today and take control of your financial future. It’s free, secure, and takes less than a minute.',
+    }
+];
 
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollX.value = event.contentOffset.x;
-    },
-  });
+const WelcomeScreen = ({ navigation }) => {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const carouselRef = useRef(null);
+  const scrollX = useRef(new Animated.Value(0)).current;
 
-  const headerStyle = useAnimatedStyle(() => {
+  const handleLogin = () => {
+    // navigation.navigate('Login');
+  };
+
+  const handleSignUp = () => {
+    // navigation.navigate('SignUp');
+  };
+
+  const headerAnimatedStyle = useAnimatedStyle(() => {
     const opacity = interpolate(
       scrollX.value,
       [(slides.length - 2) * width, (slides.length - 1) * width],
       [1, 0],
-      'clamp'
+      Extrapolate.CLAMP
     );
-
     const translateY = interpolate(
       scrollX.value,
       [(slides.length - 2) * width, (slides.length - 1) * width],
       [0, -100],
-      'clamp'
+      Extrapolate.CLAMP
     );
-
     return {
       opacity,
       transform: [{ translateY }],
     };
   });
 
+  const renderItem = ({ item, index }) => {
+    if (item.type === 'hero') {
+        return (
+            <View style={styles.slideContainer}>
+                <View style={styles.slideContent}>
+                    <Text style={styles.heroTitle}>{item.title}</Text>
+                    <Text style={styles.slideDescription}>{item.description}</Text>
+                </View>
+            </View>
+        );
+    }
+    if (item.type === 'signup') {
+        return (
+            <View style={styles.slideContainer}>
+                <View style={styles.slideContent}>
+                    <Text style={styles.slideTitle}>{item.title}</Text>
+                    <Text style={styles.slideDescription}>{item.description}</Text>
+                    <Button onPress={handleSignUp} style={{ marginTop: 24 }}>Get Started</Button>
+                </View>
+            </View>
+        );
+    }
+    return (
+        <View style={styles.slideContainer}>
+            <View style={styles.slideContent}>
+                <item.icon size={48} color={theme.colors.light.primary} />
+                <Text style={styles.slideTitle}>{item.title}</Text>
+                <Text style={styles.slideDescription}>{item.description}</Text>
+                <item.mockup isActive={selectedIndex === index} className={styles.mockup} />
+            </View>
+        </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <Animated.View style={[styles.header, headerStyle]}>
-        <WelcomeHeader onLoginPress={() => {}} onSignUpPress={() => {}} />
+      <Animated.View style={[styles.header, headerAnimatedStyle]}>
+        <Text style={styles.logo}>Semua</Text>
+        <View style={styles.headerButtons}>
+          <Button variant="ghost" onPress={handleLogin}>Log In</Button>
+          <Button onPress={handleSignUp}>Sign Up</Button>
+        </View>
       </Animated.View>
-      <Animated.ScrollView
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
-        style={styles.scrollView}
-        contentContainerStyle={{ paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }}
-      >
-        {slides.map((slide, index) => (
-          <View key={index} style={[slide.icon === WelcomeDashboard ? styles.dashboardSlide : styles.slide, { width }]}>
-            {slide.icon === WelcomeDashboard ? (
-              <WelcomeDashboard isActive={index === 1} />
-            ) : (
-              <View style={styles.textContainer}>
-                {slide.icon && <slide.icon size={48} color={theme.colors.primary} style={styles.icon} />}
-                {index === 0 ? (
-                  <View style={styles.titleContainer}>
-                    <Text style={styles.title}>{slide.title}</Text>
-                    <MaskedView
-                      style={styles.maskedView}
-                      maskElement={<Text style={[styles.title, styles.gradientText, { backgroundColor: 'transparent' }]}>{slide.gradientTitle}</Text>}
-                    >
-                      <LinearGradient
-                        colors={[theme.colors.primary, theme.colors.accent]}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 0 }}
-                      >
-                        <Text style={[styles.title, styles.gradientText, { opacity: 0 }]}>{slide.gradientTitle}</Text>
-                      </LinearGradient>
-                    </MaskedView>
-                  </View>
-                ) : (
-                  <Text style={styles.title}>{slide.title}</Text>
-                )}
-                <Text style={styles.description}>{slide.description}</Text>
-              </View>
-            )}
-          </View>
-        ))}
-      </Animated.ScrollView>
+
+      <Carousel
+        ref={carouselRef}
+        loop={false}
+        width={width}
+        height={'70%'}
+        data={slides}
+        renderItem={renderItem}
+        onProgressChange={(_, absoluteProgress) => {
+            scrollX.value = absoluteProgress * width;
+        }}
+        onSnapToItem={(index) => setSelectedIndex(index)}
+      />
+
       <View style={styles.dotContainer}>
-        {slides.map((_, i) => {
-          const dotStyle = useAnimatedStyle(() => {
-            const opacity = interpolate(
-              scrollX.value,
-              [(i - 1) * width, i * width, (i + 1) * width],
-              [0.3, 1, 0.3]
-            );
-            const dotWidth = interpolate(
-              scrollX.value,
-              [(i - 1) * width, i * width, (i + 1) * width],
-              [8, 16, 8]
-            );
-            return {
-              opacity,
-              width: dotWidth,
-            };
-          });
-          return <Animated.View key={i} style={[styles.dot, dotStyle]} />;
-        })}
+        {slides.map((_, index) => (
+          <TouchableOpacity
+            key={index}
+            style={[
+              styles.dot,
+              { backgroundColor: selectedIndex === index ? theme.colors.light.primary : theme.colors.light.muted },
+            ]}
+            onPress={() => carouselRef.current?.scrollTo({ index, animated: true })}
+          />
+        ))}
       </View>
     </SafeAreaView>
   );
@@ -154,73 +177,75 @@ const WelcomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.light.background,
   },
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     position: 'absolute',
-    top: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    top: 0,
     left: 0,
     right: 0,
     zIndex: 10,
   },
-  scrollView: {
-    flex: 1,
+  logo: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: theme.colors.light.primary,
   },
-  slide: {
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  slideContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: theme.spacing.large,
+    paddingHorizontal: 24,
+    width: width,
   },
-  dashboardSlide: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: theme.spacing.large,
-  },
-  textContainer: {
+  slideContent: {
     alignItems: 'center',
   },
-  titleContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+  heroTitle: {
+      fontSize: 32,
+      fontWeight: 'bold',
+      color: theme.colors.light.foreground,
+      textAlign: 'center',
+      marginBottom: 12,
   },
-  title: {
-    fontFamily: theme.fonts.serif,
-    fontSize: theme.fontSizes.xxl,
-    color: theme.colors.foreground,
+  slideTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: theme.colors.light.foreground,
+    marginTop: 24,
+    marginBottom: 12,
     textAlign: 'center',
-    marginBottom: theme.spacing.medium,
-    lineHeight: theme.lineHeights.loose,
   },
-  gradientText: {
-    textShadowColor: `${theme.colors.primary}90`,
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10,
-  },
-  description: {
-    fontFamily: theme.fonts.sans,
-    fontSize: theme.fontSizes.medium,
-    color: theme.colors.mutedForeground,
+  slideDescription: {
+    fontSize: 16,
+    color: theme.colors.light.mutedForeground,
     textAlign: 'center',
-    marginTop: theme.spacing.medium,
-  },
-  maskedView: {
-    height: theme.fontSizes.xxl + theme.lineHeights.loose / 2,
-  },
-  icon: {
-    marginBottom: theme.spacing.large,
   },
   dotContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: theme.spacing.large,
+    paddingVertical: 16,
   },
   dot: {
+    width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: theme.colors.primary,
     marginHorizontal: 4,
+  },
+  mockup: {
+    marginTop: 24,
+    width: width * 0.8,
+    height: 400,
   },
 });
 
