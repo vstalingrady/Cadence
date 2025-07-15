@@ -5,7 +5,7 @@ import WelcomeHeader from '~/components/WelcomeHeader';
 import MaskedView from '@react-native-masked-view/masked-view';
 import LinearGradient from 'react-native-linear-gradient';
 import Animated, { useSharedValue, useAnimatedScrollHandler, useAnimatedStyle, interpolate } from 'react-native-reanimated';
-import WelcomeDashboardMockup from '~/components/WelcomeDashboardMockup';
+import WelcomeDashboard from '~/components/WelcomeDashboard';
 
 const WelcomeScreen = () => {
   const { width } = useWindowDimensions();
@@ -19,7 +19,7 @@ const WelcomeScreen = () => {
       icon: null,
     },
     {
-      icon: WelcomeDashboardMockup,
+      icon: WelcomeDashboard,
     },
     {
       title: 'Effortless Payments',
@@ -95,9 +95,9 @@ const WelcomeScreen = () => {
         contentContainerStyle={{ paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }}
       >
         {slides.map((slide, index) => (
-          <View key={index} style={[slide.icon === WelcomeDashboardMockup ? styles.dashboardSlide : styles.slide, { width }]}>
-            {slide.icon === WelcomeDashboardMockup ? (
-              <WelcomeDashboardMockup isActive={index === 1} />
+          <View key={index} style={[slide.icon === WelcomeDashboard ? styles.dashboardSlide : styles.slide, { width }]}>
+            {slide.icon === WelcomeDashboard ? (
+              <WelcomeDashboard isActive={index === 1} />
             ) : (
               <View style={styles.textContainer}>
                 {slide.icon && <slide.icon size={48} color={theme.colors.primary} style={styles.icon} />}
