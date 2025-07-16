@@ -39,6 +39,8 @@ const WelcomeScreen = () => {
     },
     {
       type: 'dashboard',
+      title: 'Unified Dashboard',
+      description: 'All your accounts, from banks to e-wallets, in one powerful dashboard. Track your net worth, analyze spending, and manage your money with ease.',
     },
     {
       type: 'generic',
@@ -122,7 +124,15 @@ const WelcomeScreen = () => {
         {slides.map((slide, index) => (
           <View key={index} style={[slide.type === 'dashboard' ? styles.dashboardSlide : styles.slide, { width }]}>
             {slide.type === 'title' && <TitleSlide title={slide.title} gradientTitle={slide.gradientTitle} description={slide.description} />}
-            {slide.type === 'dashboard' && <WelcomeDashboardMockup isActive={index === 1} chartData={chartData} onPointSelect={() => {}} />}
+            {slide.type === 'dashboard' && (
+              <>
+                <View style={styles.textContainer}>
+                  <Text style={styles.title}>{slide.title}</Text>
+                  <Text style={styles.description}>{slide.description}</Text>
+                </View>
+                <WelcomeDashboardMockup isActive={index === 1} chartData={chartData} onPointSelect={() => {}} />
+              </>
+            )}
             {slide.type === 'generic' && <GenericSlide title={slide.title} description={slide.description} icon={slide.icon} />}
           </View>
         ))}
@@ -159,11 +169,13 @@ const styles = StyleSheet.create({
   },
   dashboardSlide: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: theme.spacing.xxl,
     paddingHorizontal: theme.spacing.large,
   },
   textContainer: {
     alignItems: 'center',
+    marginBottom: theme.spacing.large,
   },
   titleContainer: {
     alignItems: 'center',

@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         borderWidth: 1,
         borderColor: theme.colors.border,
-        marginTop: 80, // Add margin to the top
+        marginTop: theme.spacing.large,
     },
     scrollViewContent: {
         paddingVertical: 20,
