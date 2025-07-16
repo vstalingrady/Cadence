@@ -5,7 +5,9 @@ import WelcomeHeader from '~/components/WelcomeHeader';
 import MaskedView from '@react-native-masked-view/masked-view';
 import LinearGradient from 'react-native-linear-gradient';
 import Animated, { useSharedValue, useAnimatedScrollHandler, useAnimatedStyle, interpolate } from 'react-native-reanimated';
-import WelcomeDashboardMockup from '~/components/WelcomeDashboardMockup';
+import WelcomeDashboardMockup from '~/components/slides/WelcomeDashboardMockup';
+import TitleSlide from '~/components/slides/TitleSlide';
+import GenericSlide from '~/components/slides/GenericSlide';
 
 const WelcomeScreen = () => {
   const { width } = useWindowDimensions();
@@ -13,40 +15,46 @@ const WelcomeScreen = () => {
 
   const slides = [
     {
+      type: 'title',
       title: 'All Your Money,',
       gradientTitle: 'One Single App.',
       description: 'Semua securely connects to all your accounts, giving you a complete financial overview and AI-powered insights to grow your wealth.',
-      icon: null,
     },
     {
-      icon: WelcomeDashboardMockup,
+      type: 'dashboard',
     },
     {
+      type: 'generic',
       title: 'Effortless Payments',
       description: 'Pay bills, transfer funds, and top-up e-wallets seamlessly from any of your accounts, all from one central hub.',
       icon: null,
     },
     {
+      type: 'generic',
       title: 'Smart Budgeting',
       description: 'Set custom budgets, track your spending against them in real-time, and get coached by our AI to stay on track.',
       icon: null,
     },
     {
+      type: 'generic',
       title: 'AI-Powered Insights',
       description: 'Let our AI analyze your spending to find personalized saving opportunities and create actionable financial plans.',
       icon: null,
     },
     {
+      type: 'generic',
       title: 'Automated Savings',
       description: 'Create savings vaults for your goals. Automate contributions with round-ups and scheduled transfers.',
       icon: null,
     },
     {
+      type: 'generic',
       title: 'Bank-Grade Security',
       description: 'Your data is protected with the highest bank-grade security standards, including 256-bit AES encryption. Your privacy is our priority.',
       icon: null,
     },
     {
+      type: 'generic',
       title: 'Sign Up',
       description: '',
       icon: null,
@@ -95,34 +103,10 @@ const WelcomeScreen = () => {
         contentContainerStyle={{ paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }}
       >
         {slides.map((slide, index) => (
-          <View key={index} style={[slide.icon === WelcomeDashboardMockup ? styles.dashboardSlide : styles.slide, { width }]}>
-            {slide.icon === WelcomeDashboardMockup ? (
-              <WelcomeDashboardMockup isActive={index === 1} />
-            ) : (
-              <View style={styles.textContainer}>
-                {slide.icon && <slide.icon size={48} color={theme.colors.primary} style={styles.icon} />}
-                {index === 0 ? (
-                  <View style={styles.titleContainer}>
-                    <Text style={styles.title}>{slide.title}</Text>
-                    <MaskedView
-                      style={styles.maskedView}
-                      maskElement={<Text style={[styles.title, styles.gradientText, { backgroundColor: 'transparent' }]}>{slide.gradientTitle}</Text>}
-                    >
-                      <LinearGradient
-                        colors={[theme.colors.primary, theme.colors.accent]}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 0 }}
-                      >
-                        <Text style={[styles.title, styles.gradientText, { opacity: 0 }]}>{slide.gradientTitle}</Text>
-                      </LinearGradient>
-                    </MaskedView>
-                  </View>
-                ) : (
-                  <Text style={styles.title}>{slide.title}</Text>
-                )}
-                <Text style={styles.description}>{slide.description}</Text>
-              </View>
-            )}
+          <View key={index} style={[slide.type === 'dashboard' ? styles.dashboardSlide : styles.slide, { width }]}>
+            {slide.type === 'title' && <TitleSlide title={slide.title} gradientTitle={slide.gradientTitle} description={slide.description} />}
+            {slide.type === 'dashboard' && <WelcomeDashboardMockup isActive={index === 1} />}
+            {slide.type === 'generic' && <GenericSlide title={slide.title} description={slide.description} icon={slide.icon} />}
           </View>
         ))}
       </Animated.ScrollView>
