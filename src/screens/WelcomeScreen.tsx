@@ -7,7 +7,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Animated, { useSharedValue, useAnimatedScrollHandler, useAnimatedStyle, interpolate } from 'react-native-reanimated';
 import WelcomeDashboardMockup from '~/components/slides/WelcomeDashboardMockup';
 import TitleSlide from '~/components/slides/TitleSlide';
-import GenericSlide from '~/components/slides/GenericSlide';
+import Dot from '~/components/Dot';
 
 const WelcomeScreen = () => {
   const { width } = useWindowDimensions();
@@ -127,25 +127,9 @@ const WelcomeScreen = () => {
         ))}
       </Animated.ScrollView>
       <View style={styles.dotContainer}>
-        {slides.map((_, i) => {
-          const dotStyle = useAnimatedStyle(() => {
-            const opacity = interpolate(
-              scrollX.value,
-              [(i - 1) * width, i * width, (i + 1) * width],
-              [0.3, 1, 0.3]
-            );
-            const dotWidth = interpolate(
-              scrollX.value,
-              [(i - 1) * width, i * width, (i + 1) * width],
-              [8, 16, 8]
-            );
-            return {
-              opacity,
-              width: dotWidth,
-            };
-          });
-          return <Animated.View key={i} style={[styles.dot, dotStyle]} />;
-        })}
+        {slides.map((_, i) => (
+          <Dot key={i} scrollX={scrollX} index={i} width={width} />
+        ))}
       </View>
     </SafeAreaView>
   );
