@@ -203,8 +203,7 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.background,
         borderRadius: 16,
         borderWidth: 1,
-        borderColor: theme.colors.border,
-        marginTop: theme.spacing.small, // Even smaller margin
+        borderColor: theme.colors.primary, // Orange border
         shadowColor: theme.colors.primary,
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.8,
