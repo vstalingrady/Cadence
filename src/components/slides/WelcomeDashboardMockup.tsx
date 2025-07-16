@@ -204,7 +204,12 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         borderWidth: 1,
         borderColor: theme.colors.border,
-        marginTop: theme.spacing.large,
+        marginTop: theme.spacing.small, // Even smaller margin
+        shadowColor: theme.colors.primary,
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.8,
+        shadowRadius: 15,
+        elevation: 10, // For Android
     },
     scrollViewContent: {
         paddingVertical: 20,
