@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.background,
         borderRadius: 16,
         borderWidth: 1,
-        borderColor: theme.colors.primary, // Orange border
+        borderColor: 'transparent', // Make border transparent to test glow
         shadowColor: theme.colors.primary,
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 1,
@@ -211,8 +211,11 @@ const styles = StyleSheet.create({
         maxHeight: 350, // Even shorter
     },
     scrollViewContent: {
-        paddingVertical: 10,
+        paddingVertical: 5,
         paddingHorizontal: 16,
+    },
+    scrollView: {
+        flex: 1, // Make scrollview take up available space
     },
     totalBalanceContainer: {
         backgroundColor: theme.colors.muted,
