@@ -206,12 +206,12 @@ const styles = StyleSheet.create({
         shadowColor: theme.colors.primary,
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 1,
-        shadowRadius: 20,
-        elevation: 15, // For Android
-        maxHeight: 450, // Explicitly set max height
+        shadowRadius: 25,
+        elevation: 20, // For Android
+        maxHeight: 350, // Even shorter
     },
     scrollViewContent: {
-        paddingVertical: 20,
+        paddingVertical: 10,
         paddingHorizontal: 16,
     },
     totalBalanceContainer: {

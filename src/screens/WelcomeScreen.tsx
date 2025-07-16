@@ -168,9 +168,7 @@ const styles = StyleSheet.create({
     padding: theme.spacing.large,
   },
   dashboardSlide: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    paddingTop: theme.spacing.xxl,
+    height: 600, // Fixed height for the dashboard slide
     paddingHorizontal: theme.spacing.large,
   },
   textContainer: {
