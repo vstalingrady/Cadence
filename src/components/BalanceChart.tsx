@@ -179,12 +179,6 @@ const BalanceChart = ({ chartData: dataPoints, onPointSelect }) => {
     }
   }, [dataPoints, activeIndex, onPointSelect]);
 
-  const chartWidth = Math.min(screenWidth - 40, 350);
-  const chartHeight = 180;
-  const padding = { top: 10, right: 10, bottom: 30, left: 50 };
-  const innerWidth = chartWidth - padding.left - padding.right;
-  const innerHeight = chartHeight - padding.top - padding.bottom;
-
   // Pan responder for touch interactions
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
