@@ -336,7 +336,7 @@ const BalanceChart = ({ chartData: dataPoints, onPointSelect }) => {
                 {formatXAxisLabel(tick.value)}
               </Text>
             </G>
-          ))}}
+          ))}
 
           {/* Chart Area and Line */}
           <G clipPath="url(#chartClipPath)">
