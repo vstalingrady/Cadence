@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, useWindowDimensions, Platform, StatusBar, SafeAreaView } from 'react-native';
 import theme from '~/theme/theme';
 import WelcomeHeader from '~/components/WelcomeHeader';
@@ -12,6 +12,22 @@ import GenericSlide from '~/components/slides/GenericSlide';
 const WelcomeScreen = () => {
   const { width } = useWindowDimensions();
   const scrollX = useSharedValue(0);
+  const [chartData, setChartData] = useState([]);
+
+  useEffect(() => {
+    const generateData = () => {
+      const data = [];
+      for (let i = 0; i < 30; i++) {
+        data.push({
+          date: new Date(2025, 0, i + 1),
+          netWorth: Math.random() * 100000,
+        });
+      }
+      setChartData(data);
+    };
+
+    generateData();
+  }, []);
 
   const slides = [
     {
@@ -105,7 +121,7 @@ const WelcomeScreen = () => {
         {slides.map((slide, index) => (
           <View key={index} style={[slide.type === 'dashboard' ? styles.dashboardSlide : styles.slide, { width }]}>
             {slide.type === 'title' && <TitleSlide title={slide.title} gradientTitle={slide.gradientTitle} description={slide.description} />}
-            {slide.type === 'dashboard' && <WelcomeDashboardMockup isActive={index === 1} />}
+            {slide.type === 'dashboard' && <WelcomeDashboardMockup isActive={index === 1} chartData={chartData} onPointSelect={() => {}} />}
             {slide.type === 'generic' && <GenericSlide title={slide.title} description={slide.description} icon={slide.icon} />}
           </View>
         ))}
