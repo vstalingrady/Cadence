@@ -17,18 +17,7 @@ import { format } from 'date-fns';
 // Get screen dimensions
 const { width: screenWidth } = Dimensions.get('window');
 
-// Color constants (matching the CSS variables)
-const colors = {
-  primary: '#0070f3',
-  accent: '#7c3aed',
-  foreground: '#000000',
-  mutedForeground: '#6b7280',
-  card: '#ffffff',
-  primaryOpacity30: 'rgba(0, 112, 243, 0.3)',
-  primaryOpacity05: 'rgba(0, 112, 243, 0.05)',
-  foregroundOpacity40: 'rgba(0, 0, 0, 0.4)',
-  primaryOpacity60: 'rgba(0, 112, 243, 0.6)',
-};
+import theme from '~/theme/theme';
 
 // --- SVG Path Smoothing Helpers ---
 const line = (pointA, pointB) => {
@@ -43,7 +32,7 @@ const line = (pointA, pointB) => {
 const controlPoint = (current, previous, next, reverse) => {
   const p = previous || current;
   const n = next || current;
-  const smoothing = 0.2;
+  const smoothing = 0.25; // Increased smoothing
   
   const o = line(p, n);
   
@@ -295,12 +284,12 @@ const BalanceChart = ({ chartData: dataPoints, onPointSelect }) => {
         >
           <Defs>
             <LinearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <Stop offset="0%" stopColor={colors.primary} stopOpacity="0.3" />
-              <Stop offset="100%" stopColor={colors.primary} stopOpacity="0.05" />
+              <Stop offset="0%" stopColor={theme.colors.primary} stopOpacity="0.3" />
+              <Stop offset="100%" stopColor={theme.colors.primary} stopOpacity="0.05" />
             </LinearGradient>
             <LinearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <Stop offset="0%" stopColor={colors.primary} />
-              <Stop offset="100%" stopColor={colors.accent} />
+              <Stop offset="0%" stopColor={theme.colors.primary} />
+              <Stop offset="100%" stopColor={theme.colors.accent} />
             </LinearGradient>
             <ClipPath id="chartClipPath">
               <Rect x={padding.left - 2} y={padding.top} width={innerWidth + 4} height={innerHeight + 2} />
@@ -315,7 +304,7 @@ const BalanceChart = ({ chartData: dataPoints, onPointSelect }) => {
                 y1={tick.y}
                 x2={chartWidth - padding.right}
                 y2={tick.y}
-                stroke={colors.foregroundOpacity40}
+                stroke={theme.colors.mutedForeground}
                 strokeWidth="0.5"
                 strokeDasharray="2 4"
               />
@@ -324,7 +313,7 @@ const BalanceChart = ({ chartData: dataPoints, onPointSelect }) => {
                 y={tick.y + 3}
                 textAnchor="end"
                 fontSize="10"
-                fill={colors.mutedForeground}
+                fill={theme.colors.mutedForeground}
               >
                 {formatYAxisLabel(tick.value)}
               </Text>
@@ -339,12 +328,12 @@ const BalanceChart = ({ chartData: dataPoints, onPointSelect }) => {
                 y={chartHeight - padding.bottom + 15}
                 textAnchor="middle"
                 fontSize="10"
-                fill={colors.mutedForeground}
+                fill={theme.colors.mutedForeground}
               >
                 {formatXAxisLabel(tick.value)}
               </Text>
             </G>
-          ))}
+          ))}}
 
           {/* Chart Area and Line */}
           <G clipPath="url(#chartClipPath)">
@@ -370,7 +359,7 @@ const BalanceChart = ({ chartData: dataPoints, onPointSelect }) => {
                 y1={padding.top}
                 x2={activePoint.x}
                 y2={innerHeight + padding.top}
-                stroke={colors.primary}
+                stroke={theme.colors.primary}
                 strokeWidth="1"
                 strokeDasharray="3 3"
                 strokeOpacity="0.6"
@@ -379,14 +368,15 @@ const BalanceChart = ({ chartData: dataPoints, onPointSelect }) => {
                 cx={activePoint.x}
                 cy={activePoint.y}
                 r="8"
-                fill={colors.primaryOpacity30}
+                fill={theme.colors.primary}
+                fillOpacity="0.3"
               />
               <Circle
                 cx={activePoint.x}
                 cy={activePoint.y}
                 r="4"
-                fill={colors.primary}
-                stroke={colors.card}
+                fill={theme.colors.primary}
+                stroke={theme.colors.card}
                 strokeWidth="2"
               />
             </G>
@@ -399,7 +389,7 @@ const BalanceChart = ({ chartData: dataPoints, onPointSelect }) => {
                 cx={hoveredPoint.x}
                 cy={hoveredPoint.y}
                 r="4"
-                fill={colors.foreground}
+                fill={theme.colors.foreground}
               />
             </G>
           )}
