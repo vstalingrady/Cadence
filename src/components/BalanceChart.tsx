@@ -219,21 +219,6 @@ const BalanceChart = ({ chartData: dataPoints, onPointSelect }) => {
     }
   };
 
-  if (!dataPoints || dataPoints.length < 2) {
-    return (
-      <View style={{
-        width: '100%',
-        height: chartHeight,
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}>
-        <Text style={{ color: theme.colors.mutedForeground, fontSize: 14 }}>
-          Not enough data to display chart.
-        </Text>
-      </View>
-    );
-  }
-
   const formatYAxisLabel = (value) => {
     const absValue = Math.abs(value);
     if (absValue >= 1e9) {
@@ -270,6 +255,21 @@ const BalanceChart = ({ chartData: dataPoints, onPointSelect }) => {
 
   const activePoint = activeIndex !== null && dataPoints[activeIndex] ? 
     { ...dataPoints[activeIndex], index: activeIndex, x: getX(activeIndex), y: getY(dataPoints[activeIndex].netWorth) } : null;
+
+  if (!dataPoints || dataPoints.length < 2) {
+    return (
+      <View style={{
+        width: '100%',
+        height: chartHeight,
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}>
+        <Text style={{ color: theme.colors.mutedForeground, fontSize: 14 }}>
+          Not enough data to display chart.
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={{ 
