@@ -7,6 +7,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import Animated, { useSharedValue, useAnimatedScrollHandler, useAnimatedStyle, interpolate } from 'react-native-reanimated';
 import WelcomeDashboardMockup from '~/components/slides/WelcomeDashboardMockup';
 import TitleSlide from '~/components/slides/TitleSlide';
+import WelcomeDashboardMockup from '~/components/slides/WelcomeDashboardMockup';
+import TitleSlide from '~/components/slides/TitleSlide';
+import GenericSlide from '~/components/slides/GenericSlide';
 import Dot from '~/components/Dot';
 
 const WelcomeScreen = () => {
