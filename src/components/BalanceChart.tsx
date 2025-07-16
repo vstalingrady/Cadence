@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { View, Dimensions, PanResponder } from 'react-native';
+import { View, Text, Dimensions, PanResponder } from 'react-native';
 import Svg, {
   Path,
   Line,
@@ -73,6 +73,74 @@ const BalanceChart = ({ chartData: dataPoints, onPointSelect }) => {
   const [hoveredPoint, setHoveredPoint] = useState(null);
   const [activeIndex, setActiveIndex] = useState(dataPoints.length > 0 ? dataPoints.length - 1 : 0);
   const svgRef = useRef(null);
+
+  const chartWidth = Math.min(screenWidth - 40, 350);
+  const chartHeight = 180;
+  const padding = { top: 10, right: 10, bottom: 30, left: 50 };
+  const innerWidth = chartWidth - padding.left - padding.right;
+  const innerHeight = chartHeight - padding.top - padding.bottom;
+
+  const dataMin = Math.min(...dataPoints.map(d => d.netWorth));
+  const dataMax = Math.max(...dataPoints.map(d => d.netWorth));
+  const dataRange = dataMax - dataMin;
+  const rangePadding = dataRange === 0 ? Math.abs(dataMax * 0.2) : dataRange * 0.2;
+
+  const minValue = dataMin - rangePadding;
+  const maxValue = dataMax + rangePadding;
+  const valueRange = maxValue - minValue === 0 ? 1 : maxValue - minValue;
+
+  const getX = (index) => padding.left + (index / (dataPoints.length - 1)) * innerWidth;
+  const getY = (value) => padding.top + ((maxValue - value) / valueRange) * innerHeight;
+
+  const pathPoints = useMemo(() => 
+    dataPoints.map((p, i) => [getX(i), getY(p.netWorth)]),
+    [dataPoints, rangePadding]
+  );
+
+  const yAxisTicks = useMemo(() => {
+    const tickCount = 4;
+    const tickValues = [];
+    for (let i = 0; i <= tickCount; i++) {
+      tickValues.push(minValue + (i / tickCount) * (maxValue - minValue));
+    }
+    return tickValues.map(t => ({ value: t, y: getY(t) }));
+  }, [dataPoints, rangePadding]);
+
+  const xAxisTicks = useMemo(() => {
+    if (dataPoints.length < 2) return [];
+
+    const ticks = [];
+    const numPoints = dataPoints.length;
+    const maxTicks = numPoints > 30 ? 6 : 5;
+    const tickIncrement = Math.max(1, Math.ceil(numPoints / maxTicks));
+
+    for (let i = 0; i < numPoints; i += tickIncrement) {
+      const point = dataPoints[i];
+      if (point) {
+        ticks.push({
+          value: point.date,
+          x: getX(i),
+          index: i
+        });
+      }
+    }
+    
+    const lastTickX = ticks[ticks.length - 1]?.x;
+    const endX = getX(numPoints - 1);
+
+    if (!lastTickX || endX - lastTickX > innerWidth / (maxTicks * 2)) {
+      const lastPoint = dataPoints[numPoints - 1];
+      ticks.push({
+        value: lastPoint.date,
+        x: getX(numPoints - 1),
+        index: numPoints - 1
+      });
+    }
+
+    return ticks.filter((tick, index, self) =>
+      index === self.findIndex((t) => format(t.value, 'yyyy-MM-dd') === format(tick.value, 'yyyy-MM-dd'))
+    );
+  }, [dataPoints]);
 
   useEffect(() => {
     let animationFrameId;
