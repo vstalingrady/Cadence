@@ -199,16 +199,16 @@ const WelcomeDashboardMockup = ({ isActive, chartData, onPointSelect }: { isActi
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         backgroundColor: theme.colors.background,
         borderRadius: 16,
         borderWidth: 1,
         borderColor: theme.colors.primary, // Orange border
         shadowColor: theme.colors.primary,
         shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.8,
-        shadowRadius: 15,
-        elevation: 10, // For Android
+        shadowOpacity: 1,
+        shadowRadius: 20,
+        elevation: 15, // For Android
+        maxHeight: 450, // Explicitly set max height
     },
     scrollViewContent: {
         paddingVertical: 20,
