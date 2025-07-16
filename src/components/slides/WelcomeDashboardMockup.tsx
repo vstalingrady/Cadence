@@ -41,16 +41,7 @@ const mockTransactions: Transaction[] = [
     { id: 'txn_14', accountId: 'acc_mandiri_payroll_4', amount: 15000000, date: '2024-07-15', description: 'Project Freelance Payment', category: 'Income' },
 ];
 
-const generateChartData = (netWorth: number) => {
-  const data = [];
-  for (let i = 30; i >= 0; i--) {
-    const date = new Date();
-    date.setDate(date.getDate() - i);
-    const fluctuation = (Math.random() - 0.5) * 0.1;
-    data.push({ date, netWorth: netWorth * (1 + fluctuation) });
-  }
-  return data;
-};
+
 
 
 // --- Helper Functions (Adapted for React Native) ---
@@ -112,7 +103,7 @@ const MockAccountCard = ({ icon, name, displayNumber, balance, isLoan = false }:
     </View>
 );
 
-const WelcomeDashboardMockup = ({ isActive }: { isActive?: boolean }) => {
+const WelcomeDashboardMockup = ({ isActive, chartData, onPointSelect }: { isActive?: boolean, chartData: any[], onPointSelect: (point: any) => void }) => {
     const scrollRef = useRef<ScrollView>(null);
     const appState = useRef(AppState.currentState);
     const [selectedPoint, setSelectedPoint] = useState(null);
@@ -157,7 +148,7 @@ const WelcomeDashboardMockup = ({ isActive }: { isActive?: boolean }) => {
         return { netWorth, pinnedAccounts, accountGroups };
     }, []);
 
-    const chartData = useMemo(() => generateChartData(netWorth), [netWorth]);
+    const chartDataToUse = useMemo(() => chartData, [chartData]);
 
     const renderSection = (title: string, icon: React.ReactNode, accounts: Account[]) => {
         if (accounts.length === 0) return null;
