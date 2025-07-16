@@ -166,7 +166,7 @@ const BalanceChart = ({ chartData: dataPoints, onPointSelect }) => {
         justifyContent: 'center',
         alignItems: 'center'
       }}>
-        <Text style={{ color: colors.mutedForeground, fontSize: 14 }}>
+        <Text style={{ color: theme.colors.mutedForeground, fontSize: 14 }}>
           Not enough data to display chart.
         </Text>
       </View>
