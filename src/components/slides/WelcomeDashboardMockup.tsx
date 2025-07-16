@@ -202,13 +202,13 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.background,
         borderRadius: 16,
         borderWidth: 1,
-        borderColor: 'transparent', // Make border transparent to test glow
+        borderColor: theme.colors.primary, // Orange border
         shadowColor: theme.colors.primary,
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 1,
         shadowRadius: 25,
         elevation: 20, // For Android
-        maxHeight: 350, // Even shorter
+        maxHeight: 425, 
     },
     scrollViewContent: {
         paddingVertical: 5,

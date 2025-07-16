@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, useWindowDimensions, Platform, StatusBar, SafeAreaView } from 'react-native';
+import { LayoutDashboard } from 'lucide-react-native';
 import theme from '~/theme/theme';
 import WelcomeHeader from '~/components/WelcomeHeader';
 import MaskedView from '@react-native-masked-view/masked-view';
@@ -127,6 +128,7 @@ const WelcomeScreen = () => {
             {slide.type === 'dashboard' && (
               <>
                 <View style={styles.textContainer}>
+                  <LayoutDashboard color={theme.colors.primary} size={48} style={{ marginBottom: theme.spacing.large }} />
                   <Text style={styles.title}>{slide.title}</Text>
                   <Text style={styles.description}>{slide.description}</Text>
                 </View>
