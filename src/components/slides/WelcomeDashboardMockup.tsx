@@ -2,7 +2,7 @@ import React, { useMemo, useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, AppState } from 'react-native';
 import { Landmark, Briefcase, Wallet, Coins, Pin } from 'lucide-react-native';
 import theme from '~/theme/theme';
-import BalanceChart from './BalanceChart';
+import BalanceChart from '../BalanceChart';
 
 // --- Mock Data (Copied from original file) ---
 type Account = {
