@@ -234,86 +234,19 @@ const BalanceChart = ({ chartData: dataPoints, onPointSelect }) => {
     );
   }
 
-  const dataMin = Math.min(...dataPoints.map(d => d.netWorth));
-  const dataMax = Math.max(...dataPoints.map(d => d.netWorth));
-  const dataRange = dataMax - dataMin;
-  const rangePadding = dataRange === 0 ? Math.abs(dataMax * 0.2) : dataRange * 0.2;
-
-  const minValue = dataMin - rangePadding;
-  const maxValue = dataMax + rangePadding;
-  const valueRange = maxValue - minValue === 0 ? 1 : maxValue - minValue;
-
-  const getX = (index) => padding.left + (index / (dataPoints.length - 1)) * innerWidth;
-  const getY = (value) => padding.top + ((maxValue - value) / valueRange) * innerHeight;
-
-  const pathPoints = useMemo(() => 
-    dataPoints.map((p, i) => [getX(i), getY(p.netWorth)]),
-    [dataPoints, rangePadding]
-  );
-  
-  const animatedPoints = pathPoints.slice(0, Math.ceil(pathPoints.length * animationProgress));
-  const pathD = createSmoothPath(animatedPoints);
-
-  const createAreaPath = (points) => {
-    if (points.length < 2) return "";
-    const linePath = createSmoothPath(points);
-    const lastX = points[points.length - 1][0];
-    return `${linePath} L ${lastX.toFixed(2)} ${chartHeight - padding.bottom} L ${points[0][0].toFixed(2)} ${chartHeight - padding.bottom} Z`;
-  };
-  
-  const areaPathD = createAreaPath(animatedPoints);
-  
   const formatYAxisLabel = (value) => {
-    if (value >= 1e9) return `${(value / 1e9).toFixed(1)}B`;
-    if (value >= 1e6) return `${(value / 1e6).toFixed(0)}M`;
-    if (value >= 1e3) return `${(value / 1e3).toFixed(0)}K`;
-    return value.toString();
+    const absValue = Math.abs(value);
+    if (absValue >= 1e9) {
+      return `${(value / 1e9).toFixed(1)}B`;
+    }
+    if (absValue >= 1e6) {
+      return `${(value / 1e6).toFixed(1)}M`;
+    }
+    if (absValue >= 1e3) {
+      return `${(value / 1e3).toFixed(0)}K`;
+    }
+    return value.toFixed(0);
   };
-
-  const yAxisTicks = useMemo(() => {
-    const tickCount = 4;
-    const tickValues = [];
-    for (let i = 0; i <= tickCount; i++) {
-      tickValues.push(minValue + (i / tickCount) * (maxValue - minValue));
-    }
-    return tickValues.map(t => ({ value: t, y: getY(t) }));
-  }, [dataPoints, rangePadding]);
-
-  const xAxisTicks = useMemo(() => {
-    if (dataPoints.length < 2) return [];
-
-    const ticks = [];
-    const numPoints = dataPoints.length;
-    const maxTicks = numPoints > 30 ? 6 : 5;
-    const tickIncrement = Math.max(1, Math.ceil(numPoints / maxTicks));
-
-    for (let i = 0; i < numPoints; i += tickIncrement) {
-      const point = dataPoints[i];
-      if (point) {
-        ticks.push({
-          value: point.date,
-          x: getX(i),
-          index: i
-        });
-      }
-    }
-    
-    const lastTickX = ticks[ticks.length - 1]?.x;
-    const endX = getX(numPoints - 1);
-
-    if (!lastTickX || endX - lastTickX > innerWidth / (maxTicks * 2)) {
-      const lastPoint = dataPoints[numPoints - 1];
-      ticks.push({
-        value: lastPoint.date,
-        x: getX(numPoints - 1),
-        index: numPoints - 1
-      });
-    }
-
-    return ticks.filter((tick, index, self) =>
-      index === self.findIndex((t) => format(t.value, 'yyyy-MM-dd') === format(tick.value, 'yyyy-MM-dd'))
-    );
-  }, [dataPoints]);
 
   const formatXAxisLabel = (date) => {
     const numPoints = dataPoints.length;
@@ -325,6 +258,15 @@ const BalanceChart = ({ chartData: dataPoints, onPointSelect }) => {
     }
     return format(date, 'EEE');
   };
+
+  const pathD = useMemo(() => createSmoothPath(pathPoints), [pathPoints]);
+
+  const areaPathD = useMemo(() => {
+    if (pathPoints.length < 2) return '';
+    const firstPoint = pathPoints[0];
+    const lastPoint = pathPoints[pathPoints.length - 1];
+    return `${pathD} L ${lastPoint[0]} ${innerHeight + padding.top} L ${firstPoint[0]} ${innerHeight + padding.top} Z`;
+  }, [pathD, pathPoints, innerHeight, padding.top]);
 
   const activePoint = activeIndex !== null && dataPoints[activeIndex] ? 
     { ...dataPoints[activeIndex], index: activeIndex, x: getX(activeIndex), y: getY(dataPoints[activeIndex].netWorth) } : null;
