@@ -168,8 +168,10 @@ const styles = StyleSheet.create({
     padding: theme.spacing.large,
   },
   dashboardSlide: {
-    height: 600, // Fixed height for the dashboard slide
-    paddingHorizontal: theme.spacing.large,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: theme.spacing.large,
   },
   textContainer: {
     alignItems: 'center',
