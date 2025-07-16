@@ -1,10 +1,9 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { View, Text, Dimensions, PanResponder } from 'react-native';
+import { View, Dimensions, PanResponder, Text } from 'react-native';
 import Svg, {
   Path,
   Line,
   Circle,
-  Text,
   Defs,
   LinearGradient,
   Stop,
