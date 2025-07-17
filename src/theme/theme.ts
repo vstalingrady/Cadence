@@ -12,8 +12,8 @@ const theme = {
     destructive: '#EF4444',
   },
   fonts: {
-    sans: 'PlusJakartaSans-Regular',
-    serif: 'Domine-Regular',
+    sans: 'Plus Jakarta Sans',
+    serif: 'Domine',
   },
   fontSizes: {
     small: 12,

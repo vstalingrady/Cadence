@@ -5,7 +5,7 @@ import theme from '~/theme/theme';
 import WelcomeHeader from '~/components/WelcomeHeader';
 import MaskedView from '@react-native-masked-view/masked-view';
 import LinearGradient from 'react-native-linear-gradient';
-import Animated, { useSharedValue, useAnimatedScrollHandler, useAnimatedStyle, interpolate } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedScrollHandler, useAnimatedStyle, interpolate, runOnJS } from 'react-native-reanimated';
 import WelcomeDashboardMockup from '~/components/slides/WelcomeDashboardMockup';
 import WelcomePaymentMockup from '~/components/slides/WelcomePaymentMockup';
 import WelcomeInsightsMockup from '~/components/slides/WelcomeInsightsMockup';
@@ -92,7 +92,7 @@ const WelcomeScreen = () => {
     onScroll: (event) => {
       scrollX.value = event.contentOffset.x;
       const index = Math.round(event.contentOffset.x / width);
-      setSelectedIndex(index);
+      runOnJS(setSelectedIndex)(index);
     },
   });
 
