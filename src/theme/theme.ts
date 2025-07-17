@@ -13,7 +13,12 @@ const theme = {
   },
   fonts: {
     sans: 'Plus Jakarta Sans',
+    sansLight: 'PlusJakartaSans-Light',
+    sansMedium: 'PlusJakartaSans-Medium',
+    sansBold: 'PlusJakartaSans-Bold',
     serif: 'Domine',
+    serifMedium: 'Domine-Medium',
+    serifBold: 'Domine-Bold',
   },
   fontSizes: {
     small: 12,
