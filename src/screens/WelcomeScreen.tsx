@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, useWindowDimensions, Platform, StatusBar, SafeAreaView, TouchableOpacity } from 'react-native';
 import { BarChart2, Zap, PiggyBank, Sparkles, ClipboardList, ShieldCheck } from 'lucide-react-native';
 import theme from '~/theme/theme';
