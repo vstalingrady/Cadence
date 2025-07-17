@@ -12,11 +12,11 @@ const theme = {
     destructive: '#EF4444',
   },
   fonts: {
-    sans: 'Plus Jakarta Sans',
+    sans: 'PlusJakartaSans-Regular',
     sansLight: 'PlusJakartaSans-Light',
     sansMedium: 'PlusJakartaSans-Medium',
     sansBold: 'PlusJakartaSans-Bold',
-    serif: 'Domine',
+    serif: 'Domine-Regular',
     serifMedium: 'Domine-Medium',
     serifBold: 'Domine-Bold',
   },
