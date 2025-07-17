@@ -18,6 +18,22 @@ const WelcomeScreen = () => {
   const { width } = useWindowDimensions();
   const scrollX = useSharedValue(0);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [chartData, setChartData] = useState([]);
+
+  useEffect(() => {
+    const generateData = () => {
+      const data = [];
+      for (let i = 0; i < 30; i++) {
+        data.push({
+          date: new Date(2025, 0, i + 1),
+          netWorth: Math.random() * 100000000 + 200000000,
+        });
+      }
+      setChartData(data);
+    };
+
+    generateData();
+  }, []);
 
   const slides = [
     {
@@ -141,7 +157,11 @@ const WelcomeScreen = () => {
               <Text style={styles.featureDescription}>{slide.description}</Text>
             </View>
             <View style={styles.mockupContainer}>
-              <WelcomeDashboardMockup isActive={selectedIndex === index} />
+              <WelcomeDashboardMockup 
+                isActive={selectedIndex === index} 
+                chartData={chartData}
+                onPointSelect={() => {}}
+              />
             </View>
           </View>
         );
