@@ -8,6 +8,8 @@ const theme = {
     mutedForeground: '#a8a6a3',
     card: '#2d1c10',
     border: '#281e1b',
+    success: '#10B981',
+    destructive: '#EF4444',
   },
   fonts: {
     sans: 'PlusJakartaSans-Regular',
@@ -24,6 +26,7 @@ const theme = {
     small: 8,
     medium: 16,
     large: 24,
+    xl: 32,
   },
   lineHeights: {
     tight: 20,
